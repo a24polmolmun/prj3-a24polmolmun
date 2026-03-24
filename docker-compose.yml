@@ -43,6 +43,14 @@ services:
     networks:
       - prj-network
 
+  adminer:
+    image: adminer
+    container_name: prj-adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - prj-network
+
 networks:
   prj-network:
     driver: bridge
