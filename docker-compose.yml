@@ -1,0 +1,47 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: prj-mysql
+    environment:
+      MYSQL_DATABASE: prj_entrades
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    networks:
+      - prj-network
+
+  backend-api:
+    image: php:8.3-fpm
+    container_name: prj-backend-api
+    volumes:
+      - ./backend-api:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - prj-network
+
+  backend-ws:
+    image: node:24
+    container_name: prj-backend-ws
+    volumes:
+      - ./backend-ws:/app
+    working_dir: /app
+    depends_on:
+      - mysql
+    networks:
+      - prj-network
+
+  frontend:
+    image: node:24
+    container_name: prj-frontend
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    networks:
+      - prj-network
+
+networks:
+  prj-network:
+    driver: bridge
