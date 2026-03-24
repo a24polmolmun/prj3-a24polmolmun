@@ -10,8 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('seats', function (Blueprint $blueprint) {
-        // Estructura vacía solicitada
+        Schema::create('tipus_entrades', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('esdeveniment_id')->constrained('esdeveniments')->onDelete('cascade');
+            $table->string('nom');
+            $table->decimal('preu', 8, 2);
+            $table->timestamps();
         });
     }
 
@@ -20,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('seats');
+        Schema::dropIfExists('tipus_entrades');
     }
 };

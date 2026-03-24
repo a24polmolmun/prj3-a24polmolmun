@@ -11,7 +11,8 @@ services:
       - prj-network
 
   backend-api:
-    image: php:8.3-fpm
+    build:
+      context: ./src/backend-api
     container_name: prj-backend-api
     volumes:
       - ./src/backend-api:/var/www/html
