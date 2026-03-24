@@ -14,7 +14,7 @@ services:
     image: php:8.3-fpm
     container_name: prj-backend-api
     volumes:
-      - ./backend-api:/var/www/html
+      - ./src/backend-api:/var/www/html
     depends_on:
       - mysql
     networks:
@@ -24,7 +24,7 @@ services:
     image: node:24
     container_name: prj-backend-ws
     volumes:
-      - ./backend-ws:/app
+      - ./src/backend-ws:/app
     working_dir: /app
     depends_on:
       - mysql
@@ -35,7 +35,7 @@ services:
     image: node:24
     container_name: prj-frontend
     volumes:
-      - ./frontend:/app
+      - ./src/frontend:/app
     working_dir: /app
     ports:
       - "3000:3000"
