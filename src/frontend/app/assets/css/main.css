@@ -163,3 +163,354 @@ footer {
         font-size: 2rem;
     }
 }
+
+/* Seating Map Styles */
+.seat-map-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Full Refactor: Seating Map & UI */
+.event-page-bg {
+    background-color: var(--color-background);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.hall-container {
+    background: white;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header Bar (3 parts) */
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1.5rem 0;
+    border-bottom: 2px solid #f1f5f9;
+    margin-bottom: 3rem;
+}
+
+.header-left,
+.header-right {
+    flex: 1;
+}
+
+.header-center {
+    flex: 2;
+    text-align: center;
+}
+
+.movie-title-header {
+    font-size: 2.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    letter-spacing: 2px;
+}
+
+.session-time-header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-align: right;
+}
+
+/* Screen */
+.screen-wide {
+    width: 100%;
+    max-width: 800px;
+    height: 32px;
+    background: #e2e8f0;
+    margin: 0 auto 4rem auto;
+    border-radius: 100px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen-text {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #94a3b8;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+}
+
+/* Seats */
+.seats-layout {
+    display: grid;
+    grid-template-columns: 3rem repeat(8, 1fr);
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    /* Center the grid */
+    margin-bottom: 4rem;
+    width: 100%;
+}
+
+.row-id {
+    font-weight: 800;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.seat-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem 0.75rem 0.25rem 0.25rem;
+    border: none;
+    border-bottom: 4px solid rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.seat-disponible {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.seat-disponible:hover {
+    background-color: #f1f5f9;
+    transform: scale(1.05);
+}
+
+.seat-seleccionat {
+    background-color: #3b82f6;
+    /* Blau vibrant */
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+}
+
+.seat-reservat {
+    background-color: #fbbf24;
+    /* Groc/Taronja */
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
+.seat-venut {
+    background-color: #ef4444;
+    /* Vermell */
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Legend */
+.legend-centered {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 2rem;
+    width: 100%;
+}
+
+.legend-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.legend-color-sample {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 4px;
+}
+
+/* Fixed Confirmation Bar (Vibrant Style) */
+/* Reverted Confirmation Bar (Original Style) */
+.confirmation-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background-color: var(--color-primary);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    color: white;
+}
+
+.btn-confirm {
+    background-color: var(--color-accent);
+    color: white;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+}
+
+.btn-confirm:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5);
+    filter: brightness(1.1);
+}
+
+.btn-confirm:disabled {
+    background-color: #4a5568;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.5;
+}
+
+/* Adjustments for mobile to ensure everything fits in the fixed bar */
+@media (max-width: 768px) {
+    .confirmation-bar {
+        height: auto;
+        min-height: 80px;
+        padding: 1rem 0;
+    }
+
+    .btn-confirm {
+        padding: 0.8rem 1.5rem !important;
+        font-size: 0.9rem;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hall-container {
+        width: 100%;
+        padding: 1.5rem 1rem;
+        border-radius: 0;
+        /* Full width for mobile */
+        box-shadow: none;
+    }
+
+    .header-bar {
+        flex-direction: row;
+        /* Keep in one row */
+        gap: 0.5rem;
+        padding: 1rem 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .header-left {
+        flex: 1;
+        text-align: left;
+    }
+
+    .header-center {
+        flex: 2;
+        text-align: center;
+    }
+
+    .header-right {
+        flex: 1;
+        text-align: right;
+        order: 0;
+    }
+
+    .movie-title-header {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .session-time-header {
+        font-size: 0.9rem;
+    }
+
+    .btn-back {
+        font-size: 0.8rem;
+    }
+
+    .screen-wide {
+        height: 24px;
+        margin-bottom: 2.5rem;
+    }
+
+    .screen-text {
+        font-size: 0.6rem;
+        letter-spacing: 3px;
+    }
+
+    .seats-layout {
+        grid-template-columns: 1.5rem repeat(8, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .seat-btn {
+        width: 2.2rem;
+        height: 2.2rem;
+        font-size: 0.75rem;
+        border-radius: 0.5rem 0.5rem 0.2rem 0.2rem;
+    }
+
+    .row-id {
+        font-size: 0.9rem;
+    }
+
+    .screen-wide {
+        margin-bottom: 3rem;
+    }
+
+    .legend-centered {
+        gap: 1.5rem;
+    }
+
+    .legend-box {
+        font-size: 0.8rem;
+    }
+
+    .legend-box {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hall-container {
+        padding: 1rem;
+    }
+
+    .seats-layout {
+        grid-template-columns: 1rem repeat(8, 1fr);
+        gap: 0.25rem;
+    }
+
+    .seat-btn {
+        width: 1.8rem;
+        height: 1.8rem;
+        font-size: 0.65rem;
+    }
+
+    .legend-centered {
+        gap: 1rem;
+    }
+}
