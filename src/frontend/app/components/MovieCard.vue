@@ -13,35 +13,28 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col border border-gray-100 group">
-    <!-- Movie Poster -->
-    <div class="relative h-64 overflow-hidden">
+  <div class="card">
+    <div class="relative h-64 overflow-hidden" style="height: 200px; position: relative; overflow: hidden;">
       <img 
         :src="props.movie.imatge" 
         :alt="props.movie.titol" 
-        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+        style="width: 100%; h-full: 100%; object-fit: cover;"
       />
-      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-      <h3 class="absolute bottom-4 left-4 text-white font-bold text-xl drop-shadow-md">
-        {{ props.movie.titol }}
-      </h3>
     </div>
 
-    <!-- Content -->
-    <div class="p-5 flex-grow">
-      <p class="text-gray-600 text-sm line-clamp-3 mb-6">
-        {{ props.movie.descripcio }}
-      </p>
+    <div class="card-content">
+      <h3 class="card-title">{{ props.movie.titol }}</h3>
+      <p class="card-description">{{ props.movie.descripcio }}</p>
 
-      <!-- Sessions -->
-      <div class="space-y-3">
-        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Sessions disponibles</p>
-        <div class="flex flex-wrap gap-2">
+      <div class="sessions" style="margin-top: 1rem;">
+        <p style="font-size: 0.8rem; color: var(--color-muted); text-transform: uppercase; margin-bottom: 0.5rem;">Sessions</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
           <NuxtLink 
             v-for="session in props.movie.sessions" 
             :key="session"
             :to="`/esdeveniment/${props.movie.id}?hora=${session}`"
-            class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-medium text-sm hover:bg-indigo-600 hover:text-white transition-colors duration-200 border border-indigo-100"
+            class="btn"
+            style="padding: 0.4rem 0.8rem; font-size: 0.9rem;"
           >
             {{ session }}
           </NuxtLink>
