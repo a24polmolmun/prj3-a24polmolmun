@@ -9,6 +9,11 @@ export interface Seient {
     estat: SeatStatus
 }
 
+/**
+ * Nota: L'estat 'reservat' es visualitza en color groc/taronja.
+ * Aquest estat se sincronitzarà via WebSockets per mostrar bloquejos
+ * en temps real d'altres usuaris.
+ */
 export const useSeatsStore = defineStore('seats', {
     state: () => {
         const rows = ['A', 'B', 'C', 'D', 'E']
@@ -30,19 +35,37 @@ export const useSeatsStore = defineStore('seats', {
         })
 
         return {
-            seats
+            seats,
+            maxSelection: 0
         }
+    },
+    getters: {
+        selectedCount: (state) => state.seats.filter(s => s.estat === 'seleccionat').length
     },
     actions: {
         toggleSeatSelection(id: string) {
             const seat = this.seats.find(s => s.id === id)
-            if (seat && (seat.estat === 'disponible' || seat.estat === 'seleccionat')) {
-                seat.estat = seat.estat === 'disponible' ? 'seleccionat' : 'disponible'
+            if (seat) {
+                if (seat.estat === 'seleccionat') {
+                    seat.estat = 'disponible'
+                } else if (seat.estat === 'disponible') {
+                    if (this.selectedCount < this.maxSelection) {
+                        seat.estat = 'seleccionat'
+                    } else {
+                        // Optional: trigger a notification or just block
+                        console.log('Límit d\'entrades assolit')
+                    }
+                }
             }
+        },
+        setMaxSelection(count: number) {
+            this.maxSelection = count
         },
         resetSelection() {
             this.seats.forEach(seat => {
-                seat.estat = 'disponible'
+                if (seat.estat === 'seleccionat') {
+                    seat.estat = 'disponible'
+                }
             })
         }
     }

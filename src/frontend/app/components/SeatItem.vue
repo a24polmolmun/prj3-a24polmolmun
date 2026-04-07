@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { Seient } from '../stores/seatsStore'
 
+/**
+ * Nota: L'estat 'reservat' es visualitza en color groc/taronja.
+ * Aquest estat se sincronitzarà via WebSockets per mostrar bloquejos
+ * en temps real d'altres usuaris.
+ */
+
 const props = defineProps<{
   seient: Seient
 }>()
