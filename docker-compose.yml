@@ -30,6 +30,8 @@ services:
     depends_on:
       - mysql
     command: sh -c "npm install && node server.js"
+    ports:
+      - "4000:4000"
     networks:
       - prj-network
 

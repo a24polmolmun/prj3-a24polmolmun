@@ -3,12 +3,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { onMounted, computed, ref, onUnmounted } from 'vue'
 import { useEventsStore } from '../../stores/eventsStore'
 import { useSeatsStore } from '../../stores/seatsStore'
+import { useSocket } from '../../composables/useSocket'
 import SeatMap from '../../components/SeatMap.vue'
 
 const route = useRoute()
 const router = useRouter()
 const eventsStore = useEventsStore()
 const seatsStore = useSeatsStore()
+const { releaseAllSeats } = useSocket()
 
 const movieId = Number(route.params.id)
 const hora = route.query.hora as string
@@ -57,6 +59,10 @@ const startTimer = () => {
 const handleTimeout = () => {
   if (timerInterval) clearInterval(timerInterval)
   alert('El temps de reserva ha expirat. Torna-ho a intentar.')
+  
+  // Alliberar tots els seients al servidor
+  releaseAllSeats(movieId)
+  
   seatsStore.resetSelection()
   router.push('/')
 }
@@ -75,10 +81,13 @@ const selectedSeats = computed(() => {
 
 onMounted(() => {
   seatsStore.resetSelection()
+  seatsStore.initSocket(movieId) // Inicialitzar la sincronització en temps real
 })
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
+  // Alliberar tots els seients al servidor en sortir de la pàgina
+  releaseAllSeats(movieId)
 })
 
 const updateCount = (type: keyof typeof ticketCounts.value, delta: number) => {
