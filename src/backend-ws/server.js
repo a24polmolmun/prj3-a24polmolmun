@@ -1,15 +1,39 @@
 const { Server } = require("socket.io");
 const http = require("http");
+const express = require("express");
 
-const httpServer = http.createServer();
+const app = express();
+const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
     cors: {
         origin: "*", // En producció s'hauria de restringir
     },
 });
 
+app.use(express.json());
+
 // Estat en memòria: { eventId: { seatId: userId } }
 const lockedSeats = {};
+
+// Endpoint HTTP per a Laravel
+app.post("/api/broadcast-sold", (req, res) => {
+    const { eventId, seatIds } = req.body;
+
+    if (!eventId || !seatIds || !Array.isArray(seatIds)) {
+        return res.status(400).json({ success: false, message: "Falten dades o format incorrecte" });
+    }
+
+    // Emet l'esdeveniment 'seats-sold' a tots els clients de la sala de l'esdeveniment
+    io.to(`event-${eventId}`).emit("seats-sold", seatIds);
+
+    // Netejar bloquejos temporals si n'hi hagués per a aquests seients
+    if (lockedSeats[eventId]) {
+        seatIds.forEach(id => delete lockedSeats[eventId][id]);
+    }
+
+    console.log(`Venda confirmada rebiuda de Laravel per a l'esdeveniment ${eventId}:`, seatIds);
+    res.json({ success: true, message: "Notificació de venda enviada" });
+});
 
 io.on("connection", (socket) => {
     console.log("Client connectat:", socket.id);
@@ -81,6 +105,6 @@ io.on("connection", (socket) => {
 });
 
 const PORT = 4000;
-httpServer.listen(PORT, () => {
-    console.log(`Servidor WebSocket funcionant al port ${PORT}`);
+httpServer.listen(PORT, "0.0.0.0", () => {
+    console.log(`Servidor WebSocket i API de notificacions funcionant al port ${PORT}`);
 });

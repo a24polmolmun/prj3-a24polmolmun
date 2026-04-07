@@ -4,39 +4,16 @@ import { useSocket } from '../composables/useSocket'
 export type SeatStatus = 'disponible' | 'reservat' | 'venut' | 'seleccionat'
 
 export interface Seient {
-    id: string
+    id: string | number
     fila: string
     numero: number
     estat: SeatStatus
 }
 
-/**
- * Nota: L'estat 'reservat' es visualitza en color groc/taronja.
- * Aquest estat se sincronitzarà via WebSockets per mostrar bloquejos
- * en temps real d'altres usuaris.
- */
 export const useSeatsStore = defineStore('seats', {
     state: () => {
-        const rows = ['A', 'B', 'C', 'D', 'E']
-        const seatsPerRow = 8
-        const seats: Seient[] = []
-
-        rows.forEach(fila => {
-            for (let i = 1; i <= seatsPerRow; i++) {
-                // Tots els seients comencen com a disponibles per ara
-                let estat: SeatStatus = 'disponible'
-
-                seats.push({
-                    id: `${fila}${i}`,
-                    fila,
-                    numero: i,
-                    estat
-                })
-            }
-        })
-
         return {
-            seats,
+            seats: [] as Seient[],
             maxSelection: 0,
             currentEventId: null as number | null
         }
@@ -45,15 +22,18 @@ export const useSeatsStore = defineStore('seats', {
         selectedCount: (state) => state.seats.filter(s => s.estat === 'seleccionat').length
     },
     actions: {
+        setSeats(seats: Seient[]) {
+            this.seats = seats
+        },
         initSocket(eventId: number) {
             this.currentEventId = eventId
-            const { onSeatLocked, onSeatUnlocked, onSeatsReleased, onSyncLockedSeats, joinEvent } = useSocket()
+            const { onSeatLocked, onSeatUnlocked, onSeatsReleased, onSyncLockedSeats, onSeatsSold, joinEvent } = useSocket()
 
             joinEvent(eventId)
 
             onSyncLockedSeats((lockedSeats) => {
                 Object.keys(lockedSeats).forEach(seatId => {
-                    const seat = this.seats.find(s => s.id === seatId)
+                    const seat = this.seats.find(s => String(s.id) === String(seatId))
                     if (seat && seat.estat === 'disponible') {
                         seat.estat = 'reservat'
                     }
@@ -61,14 +41,14 @@ export const useSeatsStore = defineStore('seats', {
             })
 
             onSeatLocked(({ seatId }) => {
-                const seat = this.seats.find(s => s.id === seatId)
+                const seat = this.seats.find(s => String(s.id) === String(seatId))
                 if (seat && seat.estat === 'disponible') {
                     seat.estat = 'reservat'
                 }
             })
 
             onSeatUnlocked((seatId) => {
-                const seat = this.seats.find(s => s.id === seatId)
+                const seat = this.seats.find(s => String(s.id) === String(seatId))
                 if (seat && seat.estat === 'reservat') {
                     seat.estat = 'disponible'
                 }
@@ -76,15 +56,24 @@ export const useSeatsStore = defineStore('seats', {
 
             onSeatsReleased((seatIds) => {
                 seatIds.forEach(id => {
-                    const seat = this.seats.find(s => s.id === id)
+                    const seat = this.seats.find(s => String(s.id) === String(id))
                     if (seat && seat.estat === 'reservat') {
                         seat.estat = 'disponible'
                     }
                 })
             })
+
+            onSeatsSold((seatIds) => {
+                seatIds.forEach(id => {
+                    const seat = this.seats.find(s => String(s.id) === String(id))
+                    if (seat) {
+                        seat.estat = 'venut'
+                    }
+                })
+            })
         },
-        toggleSeatSelection(id: string) {
-            const seat = this.seats.find(s => s.id === id)
+        toggleSeatSelection(id: string | number) {
+            const seat = this.seats.find(s => String(s.id) === String(id))
             if (seat) {
                 const { lockSeat, unlockSeat } = useSocket()
                 if (seat.estat === 'seleccionat') {

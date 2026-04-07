@@ -25,11 +25,11 @@ export const useSocket = () => {
         socket?.emit("join-event", eventId);
     };
 
-    const lockSeat = (eventId: number, seatId: string) => {
+    const lockSeat = (eventId: number, seatId: string | number) => {
         socket?.emit("seat-lock", { eventId, seatId });
     };
 
-    const unlockSeat = (eventId: number, seatId: string) => {
+    const unlockSeat = (eventId: number, seatId: string | number) => {
         socket?.emit("seat-unlock", { eventId, seatId });
     };
 
@@ -53,6 +53,10 @@ export const useSocket = () => {
         socket?.on("sync-locked-seats", callback);
     };
 
+    const onSeatsSold = (callback: (seatIds: (string | number)[]) => void) => {
+        socket?.on("seats-sold", callback);
+    };
+
     return {
         socket,
         isConnected,
@@ -63,6 +67,7 @@ export const useSocket = () => {
         onSeatLocked,
         onSeatUnlocked,
         onSeatsReleased,
-        onSyncLockedSeats
+        onSyncLockedSeats,
+        onSeatsSold
     };
 };

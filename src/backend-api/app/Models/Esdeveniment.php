@@ -17,7 +17,16 @@ class Esdeveniment extends Model
         'data_hora',
         'recinte',
         'descripcio',
+        'imatge',
     ];
+
+    protected $appends = ['sessions'];
+
+    public function getSessionsAttribute()
+    {
+        // Retornem un array d'hores estàtiques per a la cartellera
+        return ['17:00', '19:30', '22:00'];
+    }
 
     public function tipusEntrades(): HasMany
     {
