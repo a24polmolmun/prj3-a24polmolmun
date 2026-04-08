@@ -10,12 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('seients', function (Blueprint $table) {
+        Schema::create('sessions_cinema', function (Blueprint $table) {
             $table->id();
             $table->foreignId('esdeveniment_id')->constrained('esdeveniments')->onDelete('cascade');
-            $table->string('fila');
-            $table->integer('numero');
-            $table->enum('estat', ['disponible', 'reservat', 'venut'])->default('disponible');
+            $table->date('dia');
+            $table->string('hora');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('seients');
+        Schema::dropIfExists('sessions_cinema');
     }
 };

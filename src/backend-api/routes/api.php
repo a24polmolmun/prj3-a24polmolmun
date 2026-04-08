@@ -9,5 +9,8 @@ use App\Http\Controllers\ReservaController;
 Route::get('/esdeveniments', [EsdevenimentController::class , 'index']);
 Route::get('/esdeveniments/{id}', [EsdevenimentController::class , 'show']);
 
+// Ruta per a consultar reserves per email
+Route::get('/entrades', [ReservaController::class , 'getReservesByEmail']);
+
 // Ruta per a processar la compra final
 Route::post('/compra', [ReservaController::class , 'confirmarCompra']);

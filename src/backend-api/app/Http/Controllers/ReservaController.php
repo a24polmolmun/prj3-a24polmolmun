@@ -29,7 +29,6 @@ class ReservaController extends Controller
 
         // Comprovar si tots els seients estan realment disponibles a la base de dades
         $seientsDisponibles = Seient::whereIn('id', $seientsIds)
-            ->where('esdeveniment_id', $eventId)
             ->where('estat', 'disponible')
             ->count();
 
@@ -41,7 +40,9 @@ class ReservaController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $seientsIds, $eventId) {
+            $localitzador = strtoupper(str()->random(6));
+
+            DB::transaction(function () use ($request, $seientsIds, $eventId, $localitzador) {
                 // Buscar o crear usuari pel seu email
                 $usuari = User::firstOrCreate(
                 ['email' => $request->email],
@@ -56,6 +57,7 @@ class ReservaController extends Controller
                     Reserva::create([
                         'usuari_id' => $usuari->id,
                         'seient_id' => $seientId,
+                        'localitzador' => $localitzador,
                         'estat' => 'confirmada',
                         'data_expiracio' => now()->addYear()
                     ]);
@@ -80,7 +82,8 @@ class ReservaController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Compra realitzada amb èxit'
+                'message' => 'Compra realitzada amb èxit',
+                'localitzador' => $localitzador
             ]);
 
         }
@@ -92,5 +95,33 @@ class ReservaController extends Controller
                 'message' => 'S\'ha produït un error inesperat durant la compra'
             ], 500);
         }
+    }
+
+    /**
+     * Consulta les reserves d'un usuari per email.
+     */
+    public function getReservesByEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'localitzador' => 'required|string|size:6'
+        ]);
+
+        $email = $request->query('email');
+        $localitzador = strtoupper($request->query('localitzador'));
+
+        $usuari = User::where('email', $email)->first();
+
+        if (!$usuari) {
+            return response()->json([], 200);
+        }
+
+        $reserves = Reserva::where('usuari_id', $usuari->id)
+            ->where('localitzador', $localitzador)
+            ->with(['seient.sessio.esdeveniment'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($reserves);
     }
 }

@@ -35,11 +35,6 @@ const formattedHora = computed(() => {
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-      
-      <!-- Time Badge (Main) -->
-      <div class="absolute top-4 right-4 px-3 py-1 bg-accent text-black font-black text-xs rounded-full shadow-lg">
-        {{ formattedHora }}
-      </div>
     </div>
 
     <!-- Content Section -->

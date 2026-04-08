@@ -14,15 +14,15 @@ class Seient extends Model
     protected $table = 'seients';
 
     protected $fillable = [
-        'esdeveniment_id',
+        'sessio_id',
         'fila',
         'numero',
         'estat',
     ];
 
-    public function esdeveniment(): BelongsTo
+    public function sessio(): BelongsTo
     {
-        return $this->belongsTo(Esdeveniment::class , 'esdeveniment_id');
+        return $this->belongsTo(Sessio::class , 'sessio_id');
     }
 
     public function reserves(): HasMany

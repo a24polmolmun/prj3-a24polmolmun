@@ -28,6 +28,11 @@ class Esdeveniment extends Model
         return ['17:00', '19:30', '22:00'];
     }
 
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(Sessio::class , 'esdeveniment_id');
+    }
+
     public function tipusEntrades(): HasMany
     {
         return $this->hasMany(TipusEntrada::class , 'esdeveniment_id');

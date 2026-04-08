@@ -40,21 +40,31 @@ class DatabaseSeeder extends Seeder
             'preu' => 8.00,
         ]);
 
-        // Generar butaques (Seients)
-        $files = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        $numSeientsPerFila = 12;
+        // Generar sessions per a l'esdeveniment
+        $hores = ['17:00', '19:30', '22:00'];
+        foreach ($hores as $hora) {
+            $sessio = \App\Models\Sessio::create([
+                'esdeveniment_id' => $esdeveniment->id,
+                'hora' => $hora,
+                'dia' => $esdeveniment->data_hora->format('Y-m-d'),
+            ]);
 
-        foreach ($files as $fila) {
-            for ($i = 1; $i <= $numSeientsPerFila; $i++) {
-                Seient::create([
-                    'esdeveniment_id' => $esdeveniment->id,
-                    'fila' => $fila,
-                    'numero' => $i,
-                    'estat' => 'disponible',
-                ]);
+            // Generar butaques (Seients) per a aquesta sessió
+            $files = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            $numSeientsPerFila = 12;
+
+            foreach ($files as $fila) {
+                for ($i = 1; $i <= $numSeientsPerFila; $i++) {
+                    Seient::create([
+                        'sessio_id' => $sessio->id,
+                        'fila' => $fila,
+                        'numero' => $i,
+                        'estat' => 'disponible',
+                    ]);
+                }
             }
         }
 
-        echo "Base de dades poblada amb èxit per l'esdeveniment ID: " . $esdeveniment->id . "\n";
+        echo "Base de dades poblada amb èxit per l'esdeveniment ID: " . $esdeveniment->id . " amb 3 sessions.\n";
     }
 }

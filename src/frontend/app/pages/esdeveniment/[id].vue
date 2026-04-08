@@ -14,7 +14,7 @@ const movieId = Number(route.params.id)
 const hora = route.query.hora as string
 
 // Fetch real movie details and seats from Laravel API
-const { data, pending, error } = useFetch(`http://localhost:8000/api/esdeveniments/${movieId}`)
+const { data, pending, error } = useFetch(`http://localhost:8000/api/esdeveniments/${movieId}?hora=${hora}`)
 
 const movie = computed(() => (data.value as any)?.data)
 
@@ -39,6 +39,7 @@ const ticketCounts = ref({
 const userName = ref('')
 const userEmail = ref('')
 const isSubmitting = ref(false)
+const purchaseLocator = ref('')
 
 const totalTickets = computed(() => 
   ticketCounts.value.jove + ticketCounts.value.adult + ticketCounts.value.reduida
@@ -127,9 +128,9 @@ const confirmPurchase = async () => {
 
     if (response.success) {
       if (timerInterval) clearInterval(timerInterval)
-      alert('Reserva completada amb èxit! Rebràs un correu de confirmació.')
+      purchaseLocator.value = response.localitzador
       seatsStore.resetSelection()
-      router.push('/')
+      currentStep.value = 4
     }
   } catch (error: any) {
     console.error('Error en la compra:', error)
@@ -180,26 +181,79 @@ const updateCount = (type: keyof typeof ticketCounts.value, delta: number) => {
 
       <!-- Main Flow -->
       <template v-else>
-        <!-- Header Bar -->
-        <div class="flex justify-between items-center mb-8 bg-slate-900/90 p-6 rounded-2xl backdrop-blur-xl border border-white/10 shadow-2xl">
-          <div>
-            <NuxtLink to="/" class="text-accent hover:text-white transition-all flex items-center gap-2 font-bold group">
-              <span class="text-2xl group-hover:-translate-x-1 transition-transform">←</span> Tornar a la cartellera
-            </NuxtLink>
-          </div>
-          
-          <div class="text-center">
-            <h1 class="text-2xl md:text-4xl font-black text-accent tracking-tighter uppercase italic">
-              {{ movie.nom }}
-            </h1>
-            <p class="text-accent text-sm font-bold uppercase tracking-[0.3em] mt-1">{{ hora }}</p>
-          </div>
+        <!-- Hero Section with Poster -->
+        <div class="relative mb-12 rounded-[3.5rem] overflow-hidden bg-slate-900 border border-white/10 shadow-3xl group">
+          <div class="flex flex-col md:flex-row">
+            <!-- Poster Placeholder -->
+            <div class="w-full md:w-80 lg:w-96 aspect-[2/3] relative overflow-hidden flex-shrink-0">
+               <!-- Gradient Poster simulation based on movie name -->
+               <div 
+                 class="w-full h-full animate-pulse-slow"
+                 :style="{
+                   background: `linear-gradient(135deg, #111 0%, ${movie.nom ? '#' + Math.abs(movie.nom.split('').reduce((a: number, b: string) => (a << 5) - a + b.charCodeAt(0), 0)).toString(16).slice(0, 6) : '444'} 100%)`
+                 }"
+               >
+                 <div class="absolute inset-0 flex flex-col items-center justify-center p-10 text-center">
+                    <span class="text-8xl mb-6 drop-shadow-2xl">🎬</span>
+                    <h3 class="text-2xl font-black text-white/20 uppercase tracking-[0.3em] leading-tight">{{ movie.nom }}</h3>
+                 </div>
+               </div>
+               <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+               <div class="absolute bottom-6 left-6">
+                  <div class="px-4 py-1.5 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-full shadow-xl">
+                    CARTEL OFICIAL
+                  </div>
+               </div>
+            </div>
 
-          <div class="hidden md:block">
-            <div class="bg-accent/10 px-6 py-2 rounded-full border border-accent/30 shadow-[0_0_15px_rgba(255,222,0,0.1)]">
-              <span class="text-accent font-black text-xs uppercase tracking-widest">
-                  {{ currentStep === 1 ? 'Pas 1 de 3' : (currentStep === 2 ? 'Pas 2 de 3' : 'Pas 3 de 3') }}
-              </span>
+            <!-- Movie Info -->
+            <div class="flex-1 p-8 md:p-12 flex flex-col justify-between relative">
+              <!-- Back button inside hero for better UX -->
+              <NuxtLink to="/" class="absolute top-8 right-8 text-white/20 hover:text-accent transition-all group p-2">
+                <span class="text-3xl group-hover:-translate-x-1 transition-transform block">←</span>
+              </NuxtLink>
+
+              <div>
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-accent/10 border border-accent/20 rounded-full mb-6">
+                  <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                  <span class="text-accent font-black text-[10px] uppercase tracking-[0.2em]">En Cartellera</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter uppercase italic leading-[0.85] mb-6">
+                  {{ movie.nom }}
+                </h1>
+                
+                <div class="flex flex-wrap gap-6 mb-8 uppercase font-black text-xs tracking-widest text-white/40 border-l-2 border-accent/30 pl-6">
+                   <div class="flex flex-col">
+                      <span class="text-accent/60 mb-1">DATA</span>
+                      <span class="text-white text-lg">15/04/2026</span>
+                   </div>
+                   <div class="flex flex-col border-l border-white/10 pl-6">
+                      <span class="text-accent/60 mb-1">HORA</span>
+                      <span class="text-white text-lg">{{ hora }}h</span>
+                   </div>
+                   <div class="flex flex-col border-l border-white/10 pl-6">
+                      <span class="text-accent/60 mb-1">RECINTE</span>
+                      <span class="text-white text-lg">{{ movie.recinte || 'Multisala Pol' }}</span>
+                   </div>
+                </div>
+
+                <p class="text-white/60 text-lg md:text-xl leading-relaxed max-w-2xl font-medium italic mb-10">
+                  {{ movie.descripcio }}
+                </p>
+              </div>
+
+              <!-- Steps Progress -->
+              <div class="mt-auto pt-10 border-t border-white/5 flex items-center gap-4">
+                 <div class="flex gap-2">
+                    <div v-for="i in 3" :key="i" class="h-1.5 transition-all duration-500 rounded-full" 
+                        :class="currentStep === i ? 'w-12 bg-accent' : (currentStep > i ? 'w-6 bg-accent/40' : 'w-6 bg-white/10')">
+                    </div>
+                 </div>
+                 <span class="text-[10px] font-black uppercase tracking-widest text-white/20 ml-4">
+                    Pas {{ currentStep > 3 ? 3 : currentStep }} de 3: {{ currentStep === 1 ? 'Selecció' : (currentStep === 2 ? 'Localització' : 'Pagament') }}
+                 </span>
+              </div>
             </div>
           </div>
         </div>
@@ -349,6 +403,37 @@ const updateCount = (type: keyof typeof ticketCounts.value, delta: number) => {
               <button @click="currentStep = 2" class="w-full py-4 text-white/40 font-black uppercase tracking-widest hover:text-white transition-all text-sm">
                 ← Tornar a la selecció de butaques
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Purchase Success -->
+        <div v-else-if="currentStep === 4" class="max-w-2xl mx-auto animate-fade-in text-center pb-20">
+          <div class="bg-slate-900/80 rounded-[3.5rem] p-12 border border-white/10 shadow-2xl backdrop-blur-2xl relative overflow-hidden">
+            <!-- Decorative Glow -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-accent/20 blur-[100px] rounded-full -z-10"></div>
+            
+            <div class="w-24 h-24 bg-accent text-black rounded-3xl flex items-center justify-center mx-auto mb-8 text-5xl shadow-[0_0_50px_rgba(255,222,0,0.3)]">✓</div>
+            
+            <h2 class="text-4xl font-black text-white mb-4 tracking-tighter uppercase italic">Compra realitzada!</h2>
+            <p class="text-white/40 text-lg font-medium italic mb-12">Hem enviat les teves entrades al correu <span class="text-accent">{{ userEmail }}</span></p>
+
+            <div class="bg-white/5 border-2 border-dashed border-accent/30 rounded-3xl p-8 mb-12 group hover:bg-white/10 transition-all">
+              <p class="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4">Codi Localitzador</p>
+              <p class="text-6xl font-mono font-black text-white tracking-widest">{{ purchaseLocator }}</p>
+              <div class="mt-6 flex items-center justify-center gap-2">
+                <span class="text-accent animate-pulse">●</span>
+                <p class="text-accent font-bold text-xs uppercase tracking-widest">Guarda aquest codi per consultar les teves entrades</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <NuxtLink to="/meves-entrades" class="py-5 bg-white/5 text-white font-black rounded-2xl border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-3">
+                CONSULTAR ENTRADES
+              </NuxtLink>
+              <NuxtLink to="/" class="py-5 bg-accent text-black font-black rounded-2xl hover:bg-white transition-all shadow-xl flex items-center justify-center gap-3">
+                TORNAR A L'INICI
+              </NuxtLink>
             </div>
           </div>
         </div>
