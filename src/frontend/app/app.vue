@@ -9,7 +9,7 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 <template>
   <div class="min-h-screen font-sans">
     <!-- Header públic -->
-    <header v-if="!isAdminRoute" class="bg-gray-900 relative z-[100] border-b border-white/5 py-4">
+    <header class="bg-gray-900 relative z-[100] border-b border-white/5 py-4">
       <div class="container mx-auto px-6 flex items-center justify-between">
         <NuxtLink to="/" class="text-xl font-black text-white uppercase italic tracking-tighter">Cinema <span class="text-accent">Pol</span></NuxtLink>
         <nav>
@@ -22,7 +22,7 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'))
       </div>
     </header>
 
-    <main :class="{ 'bg-slate-950': !isAdminRoute || isAdminRoute }">
+    <main :class="{ 'bg-slate-950': !isAdminRoute, 'bg-gray-50': isAdminRoute }" class="flex-1 flex flex-col">
       <NuxtPage />
     </main>
 
@@ -40,6 +40,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #020617; /* Slate 950 base */
+  @apply bg-slate-950;
 }
 .text-accent { color: #ffde00; }
 .bg-accent { background-color: #ffde00; }

@@ -64,20 +64,20 @@ const save = async () => {
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-slate-950 text-white font-sans">
+  <div class="flex flex-1 text-slate-900 font-sans">
     <AdminSidebar />
     
-    <main class="flex-1 p-12 overflow-y-auto">
-      <header class="flex justify-between items-center mb-12">
-        <div>
+    <main class="flex-1 w-full p-12 overflow-y-auto">
+      <header class="flex flex-col md:flex-row justify-between items-center mb-12 bg-white shadow-sm p-8 rounded-2xl text-center md:text-left gap-6">
+        <div class="flex flex-col items-center md:items-start">
           <h2 class="text-5xl font-black tracking-tighter uppercase italic text-accent mb-2">
             {{ isEdit ? 'Editar Pel·lícula' : 'Nova Pel·lícula' }}
           </h2>
-          <p class="text-white/40 font-medium italic">Configura els detalls generals, sessions i preus</p>
+          <p class="text-slate-500 font-medium italic">Configura els detalls generals, sessions i preus</p>
         </div>
         <div class="flex gap-4">
-           <NuxtLink to="/admin/esdeveniments" class="px-8 py-4 text-white/40 font-black uppercase tracking-widest text-xs hover:text-white transition-all">Cancel·lar</NuxtLink>
-           <button @click="save" class="bg-accent text-black px-12 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-white transition-all shadow-xl">
+           <NuxtLink to="/admin/esdeveniments" class="px-8 py-4 text-slate-500 font-black uppercase tracking-widest text-xs hover:text-slate-900 transition-all">Cancel·lar</NuxtLink>
+           <button @click="save" class="bg-accent text-black px-12 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-100 transition-all shadow-xl">
              Guardar
            </button>
         </div>
@@ -85,28 +85,28 @@ const save = async () => {
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 font-sans">
         <!-- Detalls Generals -->
-        <section class="bg-slate-900/50 p-10 rounded-[3rem] border border-white/5 space-y-8">
-          <h3 class="text-xl font-black uppercase italic tracking-tighter text-white/20 mb-6">Detalls Generals</h3>
+        <section class="bg-white shadow-sm p-10 rounded-[3rem] border border-slate-200 space-y-8">
+          <h3 class="text-xl font-black uppercase italic tracking-tighter text-slate-400 mb-6">Detalls Generals</h3>
           
           <div class="grid grid-cols-1 gap-6">
             <div class="space-y-2">
               <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Títol</label>
-              <input v-model="form.nom" type="text" class="w-full bg-slate-900 border border-white/10 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" />
+              <input v-model="form.nom" type="text" class="w-full bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" />
             </div>
             
             <div class="space-y-2">
               <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Descripció</label>
-              <textarea v-model="form.descripcio" rows="4" class="w-full bg-slate-900 border border-white/10 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-medium italic"></textarea>
+              <textarea v-model="form.descripcio" rows="4" class="w-full bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-medium italic"></textarea>
             </div>
 
             <div class="grid grid-cols-2 gap-6">
               <div class="space-y-2">
                 <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Aforament</label>
-                <input v-model="form.aforament_total" type="number" class="w-full bg-slate-900 border border-white/10 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" />
+                <input v-model="form.aforament_total" type="number" class="w-full bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" />
               </div>
               <div class="space-y-2">
                 <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">URL Imatge</label>
-                <input v-model="form.imatge" type="text" class="w-full bg-slate-900 border border-white/10 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" placeholder="https://..." />
+                <input v-model="form.imatge" type="text" class="w-full bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" placeholder="https://..." />
               </div>
             </div>
           </div>
@@ -115,34 +115,34 @@ const save = async () => {
         <!-- Sessions i Preus -->
         <div class="space-y-12">
           <!-- Sessions -->
-          <section class="bg-slate-900/50 p-10 rounded-[3rem] border border-white/5">
+          <section class="bg-white shadow-sm p-10 rounded-[3rem] border border-slate-200">
             <div class="flex justify-between items-center mb-8">
-               <h3 class="text-xl font-black uppercase italic tracking-tighter text-white/20">Sessions</h3>
-               <button @click="addSession" class="text-accent font-black uppercase tracking-widest text-[10px] hover:text-white transition-all">+ Afegir Sessió</button>
+               <h3 class="text-xl font-black uppercase italic tracking-tighter text-slate-400">Sessions</h3>
+               <button @click="addSession" class="text-accent font-black uppercase tracking-widest text-[10px] hover:text-slate-900 transition-all">+ Afegir Sessió</button>
             </div>
             <div class="space-y-4">
-               <div v-for="(s, index) in form.sessions" :key="index" class="flex items-center gap-4 bg-slate-900 p-4 rounded-2xl border border-white/5">
-                  <input v-model="s.dia" type="date" class="flex-1 bg-transparent border-none outline-none font-bold uppercase tracking-widest text-white/70" />
+               <div v-for="(s, index) in form.sessions" :key="index" class="flex items-center gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
+                  <input v-model="s.dia" type="date" class="flex-1 bg-transparent border-none outline-none font-bold uppercase tracking-widest text-slate-700" />
                   <input v-model="s.hora" type="time" class="w-24 bg-transparent border-none outline-none font-bold text-accent" />
-                  <button @click="removeSession(index)" class="w-8 h-8 flex items-center justify-center text-white/20 hover:text-red-500 transition-all">✕</button>
+                  <button @click="removeSession(index)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all">✕</button>
                </div>
             </div>
           </section>
 
           <!-- Preus -->
-          <section class="bg-slate-900/50 p-10 rounded-[3rem] border border-white/5">
+          <section class="bg-white shadow-sm p-10 rounded-[3rem] border border-slate-200">
             <div class="flex justify-between items-center mb-8">
-               <h3 class="text-xl font-black uppercase italic tracking-tighter text-white/20">Preus</h3>
-               <button @click="addPrice" class="text-accent font-black uppercase tracking-widest text-[10px] hover:text-white transition-all">+ Afegir Preu</button>
+               <h3 class="text-xl font-black uppercase italic tracking-tighter text-slate-400">Preus</h3>
+               <button @click="addPrice" class="text-accent font-black uppercase tracking-widest text-[10px] hover:text-slate-900 transition-all">+ Afegir Preu</button>
             </div>
             <div class="space-y-4">
-               <div v-for="(p, index) in form.preus" :key="index" class="flex items-center gap-4 bg-slate-900 p-4 rounded-2xl border border-white/5">
-                  <input v-model="p.nom" type="text" placeholder="Categoria" class="flex-1 bg-transparent border-none outline-none font-bold uppercase tracking-widest text-white/70" />
+               <div v-for="(p, index) in form.preus" :key="index" class="flex items-center gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
+                  <input v-model="p.nom" type="text" placeholder="Categoria" class="flex-1 bg-transparent border-none outline-none font-bold uppercase tracking-widest text-slate-700" />
                   <div class="flex items-center gap-2">
                     <input v-model="p.preu" type="number" step="0.5" class="w-16 bg-transparent border-none outline-none font-bold text-accent text-right" />
                     <span class="text-accent font-black">€</span>
                   </div>
-                  <button @click="removePrice(index)" class="w-8 h-8 flex items-center justify-center text-white/20 hover:text-red-500 transition-all">✕</button>
+                  <button @click="removePrice(index)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all">✕</button>
                </div>
             </div>
           </section>
