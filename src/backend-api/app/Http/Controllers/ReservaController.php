@@ -19,12 +19,15 @@ class ReservaController extends Controller
     {
         $request->validate([
             'esdeveniment_id' => 'required|exists:esdeveniments,id',
-            'seients_ids' => 'required|array',
+            'entrades' => 'required|array',
+            'entrades.*.seient_id' => 'required|exists:seients,id',
+            'entrades.*.tipus_id' => 'required|exists:tipus_entrades,id',
             'nom' => 'required|string',
             'email' => 'required|email'
         ]);
 
-        $seientsIds = $request->seients_ids;
+        $entrades = $request->entrades;
+        $seientsIds = array_column($entrades, 'seient_id');
         $eventId = $request->esdeveniment_id;
 
         // Comprovar si tots els seients estan realment disponibles a la base de dades
@@ -42,7 +45,7 @@ class ReservaController extends Controller
         try {
             $localitzador = strtoupper(str()->random(6));
 
-            DB::transaction(function () use ($request, $seientsIds, $eventId, $localitzador) {
+            DB::transaction(function () use ($request, $entrades, $eventId, $localitzador) {
                 // Buscar o crear usuari pel seu email
                 $usuari = User::firstOrCreate(
                 ['email' => $request->email],
@@ -53,17 +56,18 @@ class ReservaController extends Controller
                 );
 
                 // Per a cada seient, creem la reserva i actualitzem el seu estat
-                foreach ($seientsIds as $seientId) {
+                foreach ($entrades as $entrada) {
                     Reserva::create([
                         'usuari_id' => $usuari->id,
-                        'seient_id' => $seientId,
+                        'seient_id' => $entrada['seient_id'],
+                        'tipus_entrada_id' => $entrada['tipus_id'],
                         'localitzador' => $localitzador,
                         'estat' => 'confirmada',
                         'data_expiracio' => now()->addYear()
                     ]);
 
                     // Actualitzem l'estat del seient a 'venut'
-                    Seient::where('id', $seientId)->update(['estat' => 'venut']);
+                    Seient::where('id', $entrada['seient_id'])->update(['estat' => 'venut']);
                 }
             });
 

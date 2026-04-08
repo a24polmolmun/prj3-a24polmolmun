@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->dateTime('data_hora');
             $table->string('recinte');
             $table->text('descripcio')->nullable();
+            $table->string('imatge')->nullable();
+            $table->integer('aforament_total')->default(96);
             $table->timestamps();
         });
     }

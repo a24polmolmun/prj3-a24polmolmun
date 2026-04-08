@@ -14,6 +14,7 @@ app.use(express.json());
 
 // Estat en memòria: { eventId: { seatId: userId } }
 const lockedSeats = {};
+let totalConnectedUsers = 0;
 
 // Endpoint HTTP per a Laravel
 app.post("/api/broadcast-sold", (req, res) => {
@@ -36,7 +37,17 @@ app.post("/api/broadcast-sold", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-    console.log("Client connectat:", socket.id);
+    totalConnectedUsers++;
+    console.log("Client connectat:", socket.id, "| Total:", totalConnectedUsers);
+
+    // Notificar a tothom (o almenys als admins) el nou comptador
+    io.emit("user-count-update", totalConnectedUsers);
+
+    socket.on("join-admin", () => {
+        socket.join("admin-room");
+        console.log(`L'usuari ${socket.id} ha entrat al panell d'administració`);
+        socket.emit("user-count-update", totalConnectedUsers);
+    });
 
     socket.on("join-event", (eventId) => {
         socket.join(`event-${eventId}`);
@@ -84,7 +95,9 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("Client desconnectat:", socket.id);
+        totalConnectedUsers--;
+        console.log("Client desconnectat:", socket.id, "| Total:", totalConnectedUsers);
+        io.emit("user-count-update", totalConnectedUsers);
 
         // Alliberar seients automàticament en desconnectar de tots els esdeveniments
         for (const eventId in lockedSeats) {

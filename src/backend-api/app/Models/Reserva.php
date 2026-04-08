@@ -15,6 +15,7 @@ class Reserva extends Model
     protected $fillable = [
         'usuari_id',
         'seient_id',
+        'tipus_entrada_id',
         'localitzador',
         'estat',
         'data_expiracio',
@@ -28,5 +29,10 @@ class Reserva extends Model
     public function seient(): BelongsTo
     {
         return $this->belongsTo(Seient::class , 'seient_id');
+    }
+
+    public function tipusEntrada(): BelongsTo
+    {
+        return $this->belongsTo(TipusEntrada::class , 'tipus_entrada_id');
     }
 }
