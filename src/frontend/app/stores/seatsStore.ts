@@ -27,7 +27,10 @@ export const useSeatsStore = defineStore('seats', {
         },
         initSocket(eventId: number) {
             this.currentEventId = eventId
-            const { onSeatLocked, onSeatUnlocked, onSeatsReleased, onSyncLockedSeats, onSeatsSold, joinEvent } = useSocket()
+            const { onSeatLocked, onSeatUnlocked, onSeatsReleased, onSyncLockedSeats, onSeatsSold, joinEvent, cleanup } = useSocket()
+
+            // Netejar listeners previs per evitar duplicats si canviem de sessió
+            cleanup()
 
             joinEvent(eventId)
 

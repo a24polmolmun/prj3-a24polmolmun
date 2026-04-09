@@ -12,7 +12,7 @@ class EsdevenimentController extends Controller
      */
     public function index()
     {
-        $esdeveniments = Esdeveniment::with('tipusEntrades')->get();
+        $esdeveniments = Esdeveniment::with(['tipusEntrades', 'sessions'])->get();
 
         return response()->json([
             'success' => true,
@@ -28,7 +28,7 @@ class EsdevenimentController extends Controller
         $hora = $request->query('hora');
 
         // Busquem l'esdeveniment i la sessió específica
-        $esdeveniment = Esdeveniment::with(['tipusEntrades'])->find($id);
+        $esdeveniment = Esdeveniment::with(['sessions', 'tipusEntrades'])->find($id);
 
         if (!$esdeveniment) {
             return response()->json([

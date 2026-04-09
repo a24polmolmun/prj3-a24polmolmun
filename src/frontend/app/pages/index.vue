@@ -1,6 +1,11 @@
 <script setup lang="ts">
-// Fetch real movies from Laravel API
-const { data, pending, error, refresh } = useFetch('http://localhost:8000/api/esdeveniments')
+// Fetch real movies from Laravel API with robust error handling
+const { data, pending, error, refresh } = useFetch('http://localhost:8000/api/esdeveniments', {
+  lazy: true,
+  // Retry 3 times with exponential backoff behavior (default Nuxt behavior if true/number)
+  retry: 3,
+  retryDelay: 1000, // 1 second between retries
+})
 
 // Extract the array of events from the API Response
 const movies = computed(() => {

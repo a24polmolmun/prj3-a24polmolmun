@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+interface Session {
+  id: number
+  hora: string
+  dia: string
+}
+
 interface Movie {
   id: number
   nom: string
@@ -8,15 +14,20 @@ interface Movie {
   imatge: string
   data_hora: string
   recinte: string
-  sessions: string[]
+  sessions: Session[]
 }
 
 const props = defineProps<{
   movie: Movie
 }>()
 
-// Hores des de l'API amb fallback
-const sessions = computed(() => props.movie.sessions || ['17:00', '19:30', '22:00'])
+// Hores des de l'API amb fallback per si no n'hi ha cap
+const sessions = computed(() => {
+  if (props.movie.sessions && props.movie.sessions.length > 0) {
+    return props.movie.sessions.map(s => s.hora)
+  }
+  return ['17:00', '19:30', '22:00']
+})
 
 const formattedHora = computed(() => {
   if (!props.movie.data_hora) return ''
@@ -30,7 +41,7 @@ const formattedHora = computed(() => {
     <!-- Image Section -->
     <div class="relative h-64 overflow-hidden">
       <img 
-        :src="movie.imatge || 'https://images.unsplash.com/photo-1485846234645-a62644ffb1e7?q=80&w=1000&auto=format&fit=crop'" 
+        :src="movie.imatge?.startsWith('/storage') ? 'http://localhost:8000' + movie.imatge : (movie.imatge || 'https://images.unsplash.com/photo-1485846234645-a62644ffb1e7?q=80&w=1000&auto=format&fit=crop')" 
         :alt="movie.nom" 
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />

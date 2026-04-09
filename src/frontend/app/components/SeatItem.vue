@@ -7,9 +7,12 @@ import type { Seient } from '../stores/seatsStore'
  * en temps real d'altres usuaris.
  */
 
-const props = defineProps<{
-  seient: Seient
-}>()
+const props = withDefaults(defineProps<{
+  seient: Seient,
+  readonly?: boolean
+}>(), {
+  readonly: false
+})
 
 const emit = defineEmits(['toggle'])
 
@@ -25,10 +28,11 @@ const statusClasses = {
   <button
     :class="[
       'seat-btn',
-      `seat-${props.seient.estat}`
+      `seat-${props.seient.estat}`,
+      { 'cursor-default pointer-events-none hover:scale-100': props.readonly }
     ]"
-    :disabled="props.seient.estat === 'reservat' || props.seient.estat === 'venut'"
-    @click="emit('toggle', props.seient.id)"
+    :disabled="props.readonly || props.seient.estat === 'reservat' || props.seient.estat === 'venut'"
+    @click="!props.readonly && emit('toggle', props.seient.id)"
     :title="`Fila ${props.seient.fila}, Seient ${props.seient.numero} - ${props.seient.estat}`"
   >
     {{ props.seient.numero }}

@@ -21,6 +21,7 @@ Route::post('/compra', [ReservaController::class , 'confirmarCompra']);
 Route::prefix('admin')->group(function () {
     Route::get('/esdeveniments', [AdminController::class , 'index']);
     Route::post('/esdeveniments', [AdminController::class , 'store']);
+    Route::put('/esdeveniments/{id}', [AdminController::class , 'update']);
     Route::get('/esdeveniments/{id}', [AdminController::class , 'show']);
     Route::delete('/esdeveniments/{id}', [AdminController::class , 'destroy']);
 

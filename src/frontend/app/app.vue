@@ -16,7 +16,7 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'))
           <ul class="flex gap-8">
             <li><NuxtLink to="/" class="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-accent transition-colors">Inici</NuxtLink></li>
             <li><NuxtLink to="/meves-entrades" class="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-accent transition-colors">Les meves entrades</NuxtLink></li>
-            <li><NuxtLink to="#" class="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-accent transition-colors">Contacte</NuxtLink></li>
+            <li><NuxtLink to="/admin/login" class="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-accent transition-colors border-l border-white/10 pl-8">Accés Administració</NuxtLink></li>
           </ul>
         </nav>
       </div>

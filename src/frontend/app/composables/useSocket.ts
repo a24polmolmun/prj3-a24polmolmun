@@ -57,6 +57,14 @@ export const useSocket = () => {
         socket?.on("seats-sold", callback);
     };
 
+    const cleanup = () => {
+        socket?.off("seat-locked");
+        socket?.off("seat-unlocked");
+        socket?.off("seats-released");
+        socket?.off("sync-locked-seats");
+        socket?.off("seats-sold");
+    };
+
     return {
         socket,
         isConnected,
@@ -68,6 +76,7 @@ export const useSocket = () => {
         onSeatUnlocked,
         onSeatsReleased,
         onSyncLockedSeats,
-        onSeatsSold
+        onSeatsSold,
+        cleanup
     };
 };

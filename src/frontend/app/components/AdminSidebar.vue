@@ -1,13 +1,32 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 const navItems = [
-  { name: 'Dashboard', path: '/admin/dashboard' },
+  { name: 'Taulell de Control', path: '/admin/dashboard' },
   { name: 'Pel·lícules', path: '/admin/esdeveniments' },
   { name: 'Informes', path: '/admin/informes' }
 ]
+
+onMounted(() => {
+    // Comprovar si l'usuari està autenticat (només al client)
+    if (import.meta.client) {
+        const auth = localStorage.getItem('admin_auth')
+        if (!auth && !window.location.pathname.includes('/admin/login')) {
+            router.push('/admin/login')
+        }
+    }
+})
+
+const handleLogout = () => {
+    localStorage.removeItem('admin_auth')
+    router.push('/admin/login')
+}
 </script>
 
 <template>
-  <aside class="w-72 bg-white border-r border-slate-200 flex flex-col h-screen">
+  <aside class="w-72 bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0">
     <div class="p-8 border-b border-slate-200">
       <h1 class="text-2xl font-black text-accent tracking-tighter uppercase italic">
         Admin <span class="text-slate-900">Cinema Pol</span>
@@ -27,11 +46,18 @@ const navItems = [
       </NuxtLink>
     </nav>
 
-    <div class="p-8 border-t border-slate-200">
+    <div class="p-8 border-t border-slate-200 space-y-4">
       <div class="bg-slate-100 rounded-2xl p-4 border border-slate-200">
         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Usuari actiu</p>
         <p class="text-sm font-bold text-slate-900">Administrador</p>
       </div>
+      
+      <button 
+        @click="handleLogout"
+        class="w-full py-4 text-red-500 font-black uppercase tracking-widest text-[10px] hover:bg-red-50 rounded-2xl transition-all"
+      >
+        Tancar Sessió
+      </button>
     </div>
   </aside>
 </template>

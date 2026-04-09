@@ -1,8 +1,27 @@
 <script setup lang="ts">
-import { useSeatsStore } from '../stores/seatsStore'
+import { computed } from 'vue'
+import { useSeatsStore, type Seient } from '../stores/seatsStore'
 import SeatItem from './SeatItem.vue'
 
+const props = withDefaults(defineProps<{
+  readonly?: boolean
+}>(), {
+  readonly: false
+})
+
 const seatsStore = useSeatsStore()
+
+// Obtenir files úniques de forma dinàmica des de l'store
+const rows = computed(() => {
+  const rowSet = new Set<string>()
+  seatsStore.seats.forEach(s => rowSet.add(s.fila))
+  return Array.from(rowSet).sort()
+})
+
+// Funció helper per obtenir un seient concret per fila i número
+const getSeat = (row: string, num: number): Seient | undefined => {
+  return seatsStore.seats.find(s => s.fila === row && s.numero === num)
+}
 </script>
 
 <template>
@@ -13,14 +32,22 @@ const seatsStore = useSeatsStore()
     </div>
 
     <!-- Seats Grid with Row Labels -->
-    <div class="seats-layout">
-      <template v-for="row in ['A', 'B', 'C', 'D', 'E']" :key="row">
-        <div class="row-id">{{ row }}</div>
-        <div v-for="n in 8" :key="`${row}${n}`" class="seat-wrapper">
-          <SeatItem 
-            :seient="seatsStore.seats.find(s => s.fila === row && s.numero === n)!" 
-            @toggle="seatsStore.toggleSeatSelection" 
-          />
+    <!-- Utilitzem 13 columnes: 1 per l'ID de fila + 12 per les butaques -->
+    <div class="seats-layout grid grid-cols-[3rem_repeat(12,1fr)] gap-2 md:gap-4 items-center justify-items-center w-full max-w-4xl mx-auto">
+      <template v-for="row in rows" :key="row">
+        <!-- Label de la fila -->
+        <div class="row-id font-black text-slate-400">{{ row }}</div>
+        
+        <!-- Butaques de la fila (fins a 12) -->
+        <div v-for="n in 12" :key="`${row}${n}`" class="seat-wrapper w-full flex justify-center">
+            <SeatItem 
+              v-if="getSeat(row, n)"
+              :seient="getSeat(row, n)!" 
+              :readonly="props.readonly"
+              @toggle="seatsStore.toggleSeatSelection" 
+            />
+            <!-- Espai buit si no hi ha seient en aquesta posició (per mantenir la graella) -->
+            <div v-else class="w-8 h-8 md:w-12 md:h-12 opacity-0"></div>
         </div>
       </template>
     </div>

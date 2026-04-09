@@ -28,12 +28,17 @@ watch(data, (newVal: any) => {
 // State for steps
 const currentStep = ref(1)
 
-// State for tickets (Pas 1)
-const ticketCounts = ref({
-  jove: 0,
-  adult: 0,
-  reduida: 0
-})
+// State for tickets (Pas 1) - Now dynamic
+const ticketCounts = ref<Record<number, number>>({})
+
+// Initialize ticket counts when movie data is available
+watch(movie, (newMovie) => {
+  if (newMovie?.tipus_entrades && Object.keys(ticketCounts.value).length === 0) {
+    newMovie.tipus_entrades.forEach((t: any) => {
+      ticketCounts.value[t.id] = 0
+    })
+  }
+}, { immediate: true })
 
 // State for User Data (Pas 3)
 const userName = ref('')
@@ -42,22 +47,15 @@ const isSubmitting = ref(false)
 const purchaseLocator = ref('')
 
 const totalTickets = computed(() => 
-  ticketCounts.value.jove + ticketCounts.value.adult + ticketCounts.value.reduida
+  Object.values(ticketCounts.value).reduce((a, b) => a + b, 0)
 )
 
 const totalPrice = computed(() => {
-  if (!movie.value) return 0
+  if (!movie.value?.tipus_entrades) return 0
   
-  // Trobar preus dinàmicament des de l'API o utilitzar fallbacks
-  const preus = {
-    jove: movie.value.tipus_entrades?.find((t: any) => t.nom === 'Jove')?.preu || 5,
-    adult: movie.value.tipus_entrades?.find((t: any) => t.nom === 'Adult')?.preu || 12,
-    reduida: movie.value.tipus_entrades?.find((t: any) => t.nom === 'Reduïda')?.preu || 8
-  }
-  
-  return (ticketCounts.value.jove * preus.jove) + 
-         (ticketCounts.value.adult * preus.adult) + 
-         (ticketCounts.value.reduida * preus.reduida)
+  return movie.value.tipus_entrades.reduce((acc: number, t: any) => {
+    return acc + (ticketCounts.value[t.id] || 0) * t.preu
+  }, 0)
 })
 
 // Timer state (Pas 2)
@@ -114,13 +112,31 @@ const confirmPurchase = async () => {
     return
   }
 
+  // Creació de l'array 'entrades' requerit pel backend
+  const entradesPayload = []
+  let seatIndex = 0
+  const seats = selectedSeats.value
+
+  for (const typeId in ticketCounts.value) {
+    const count = ticketCounts.value[typeId]
+    for (let i = 0; i < count; i++) {
+      if (seats[seatIndex]) {
+        entradesPayload.push({
+          seient_id: seats[seatIndex].id,
+          tipus_id: Number(typeId)
+        })
+        seatIndex++
+      }
+    }
+  }
+
   isSubmitting.value = true
   try {
     const response = await $fetch('http://localhost:8000/api/compra', {
       method: 'POST',
       body: {
         esdeveniment_id: movieId,
-        seients_ids: selectedSeats.value.map(s => s.id),
+        entrades: entradesPayload,
         nom: userName.value,
         email: userEmail.value
       }
@@ -156,10 +172,11 @@ onUnmounted(() => {
   releaseAllSeats(movieId)
 })
 
-const updateCount = (type: keyof typeof ticketCounts.value, delta: number) => {
-  const newVal = ticketCounts.value[type] + delta
+const updateCount = (typeId: number, delta: number) => {
+  const current = ticketCounts.value[typeId] || 0
+  const newVal = current + delta
   if (newVal >= 0) {
-    ticketCounts.value[type] = newVal
+    ticketCounts.value[typeId] = newVal
   }
 }
 </script>
@@ -186,8 +203,15 @@ const updateCount = (type: keyof typeof ticketCounts.value, delta: number) => {
           <div class="flex flex-col md:flex-row">
             <!-- Poster Placeholder -->
             <div class="w-full md:w-80 lg:w-96 aspect-[2/3] relative overflow-hidden flex-shrink-0">
-               <!-- Gradient Poster simulation based on movie name -->
+               <!-- Poster Image -->
+               <img 
+                 v-if="movie.imatge"
+                 :src="movie.imatge.startsWith('/storage') ? 'http://localhost:8000' + movie.imatge : movie.imatge"
+                 class="w-full h-full object-cover"
+               />
+               <!-- Gradient Poster fallback -->
                <div 
+                 v-else
                  class="w-full h-full animate-pulse-slow"
                  :style="{
                    background: `linear-gradient(135deg, #111 0%, ${movie.nom ? '#' + Math.abs(movie.nom.split('').reduce((a: number, b: string) => (a << 5) - a + b.charCodeAt(0), 0)).toString(16).slice(0, 6) : '444'} 100%)`
@@ -266,43 +290,21 @@ const updateCount = (type: keyof typeof ticketCounts.value, delta: number) => {
           </div>
           
           <div class="space-y-6">
-            <!-- Ticket Type Item -->
-            <div class="flex items-center justify-between p-6 bg-white/[0.03] rounded-3xl border border-white/5 hover:bg-white/[0.06] hover:border-accent/40 hover:scale-[1.02] transition-all duration-300 group">
-              <div>
-                <h3 class="text-xl font-bold text-white group-hover:text-accent transition-colors">Menors de 16 o majors de 65 anys</h3>
-                <p class="text-accent/80 font-bold mt-1 text-lg">5.00 €</p>
-              </div>
-              <div class="flex items-center gap-6">
-                <button @click="updateCount('jove', -1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-red-500 hover:text-white transition-all flex items-center justify-center text-2xl font-black border border-white/10">-</button>
-                <span class="text-3xl font-black text-white w-10 text-center">{{ ticketCounts.jove }}</span>
-                <button @click="updateCount('jove', 1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-accent hover:text-black transition-all flex items-center justify-center text-2xl font-black border border-white/10">+</button>
-              </div>
-            </div>
-
-            <!-- Ticket Type Item -->
-            <div class="flex items-center justify-between p-6 bg-white/[0.03] rounded-3xl border border-white/5 hover:bg-white/[0.06] hover:border-accent/40 hover:scale-[1.02] transition-all duration-300 group">
-              <div>
-                <h3 class="text-xl font-bold text-white group-hover:text-accent transition-colors">Adults</h3>
-                <p class="text-accent/80 font-bold mt-1 text-lg">12.00 €</p>
-              </div>
-              <div class="flex items-center gap-6">
-                <button @click="updateCount('adult', -1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-red-500 hover:text-white transition-all flex items-center justify-center text-2xl font-black border border-white/10">-</button>
-                <span class="text-3xl font-black text-white w-10 text-center">{{ ticketCounts.adult }}</span>
-                <button @click="updateCount('adult', 1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-accent hover:text-black transition-all flex items-center justify-center text-2xl font-black border border-white/10">+</button>
-              </div>
-            </div>
-
-            <!-- Ticket Type Item -->
-            <div class="flex items-center justify-between p-6 bg-white/[0.03] rounded-3xl border border-white/5 hover:bg-white/[0.06] hover:border-accent/40 hover:scale-[1.02] transition-all duration-300 group">
+            <!-- Ticket Type Item (Dynamic) -->
+            <div 
+              v-for="tipus in movie.tipus_entrades" 
+              :key="tipus.id"
+              class="flex items-center justify-between p-6 bg-white/[0.03] rounded-3xl border border-white/5 hover:bg-white/[0.06] hover:border-accent/40 hover:scale-[1.02] transition-all duration-300 group"
+            >
               <div class="flex-1 mr-6">
-                <h3 class="text-xl font-bold text-white group-hover:text-accent transition-colors">Reduïda</h3>
-                <p class="text-accent/80 font-bold mt-1 text-lg">8.00 €</p>
-                <p class="text-white/30 text-xs mt-3 italic leading-relaxed font-medium">Persones amb una discapacitat del 33% o superior i persones amb el carnet Jove d'entre 17 a 30 anys</p>
+                <h3 class="text-xl font-bold text-white group-hover:text-accent transition-colors">{{ tipus.nom }}</h3>
+                <p class="text-accent/80 font-bold mt-1 text-lg">{{ Number(tipus.preu).toFixed(2) }} €</p>
+                <p v-if="tipus.nom === 'Reduïda'" class="text-white/30 text-xs mt-3 italic leading-relaxed font-medium">Persones amb una discapacitat del 33% o superior i persones amb el carnet Jove d'entre 17 a 30 anys</p>
               </div>
               <div class="flex items-center gap-6">
-                <button @click="updateCount('reduida', -1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-red-500 hover:text-white transition-all flex items-center justify-center text-2xl font-black border border-white/10">-</button>
-                <span class="text-3xl font-black text-white w-10 text-center">{{ ticketCounts.reduida }}</span>
-                <button @click="updateCount('reduida', 1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-accent hover:text-black transition-all flex items-center justify-center text-2xl font-black border border-white/10">+</button>
+                <button @click="updateCount(tipus.id, -1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-red-500 hover:text-white transition-all flex items-center justify-center text-2xl font-black border border-white/10">-</button>
+                <span class="text-3xl font-black text-white w-10 text-center">{{ ticketCounts[tipus.id] || 0 }}</span>
+                <button @click="updateCount(tipus.id, 1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-accent hover:text-black transition-all flex items-center justify-center text-2xl font-black border border-white/10">+</button>
               </div>
             </div>
           </div>

@@ -256,7 +256,7 @@ footer {
 /* Seats */
 .seats-layout {
     display: grid;
-    grid-template-columns: 3rem repeat(8, 1fr);
+    grid-template-columns: 3rem repeat(12, 1fr);
     gap: 1rem;
     align-items: center;
     justify-content: center;

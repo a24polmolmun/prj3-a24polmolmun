@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { data, refresh } = await useFetch('http://localhost:8000/api/admin/esdeveniments')
+// Recuperar llista de pel·lícules de l'API (només al client)
+const { data, refresh } = await useFetch('http://localhost:8000/api/admin/esdeveniments', { server: false })
 const movies = computed(() => (data.value as any)?.data || [])
 
 const deleteMovie = async (id: number) => {
@@ -41,7 +42,7 @@ const deleteMovie = async (id: number) => {
         >
           <div class="flex items-center gap-8 flex-1">
              <div class="w-24 h-32 bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 flex-shrink-0 flex items-center justify-center relative">
-                <img v-if="movie.imatge" :src="movie.imatge" class="w-full h-full object-cover">
+                <img v-if="movie.imatge" :src="movie.imatge.startsWith('/storage') ? 'http://localhost:8000' + movie.imatge : movie.imatge" class="w-full h-full object-cover">
                 <span v-else class="text-xs text-slate-300 font-black uppercase">Sense Imatge</span>
              </div>
              <div>

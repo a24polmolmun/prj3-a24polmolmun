@@ -16,23 +16,27 @@ class StatsController extends Controller
      */
     public function index()
     {
-        // 1. Recaptació total i desglossada per tipus d'entrada
+        // 1. Recaptació total desglossada per tipus (Fem un join per obtenir el preu actual del tipus)
+        // Nota: Si el tipus s'ha esborrat, usem un LEFT JOIN per no perdre la reserva del recompte
         $recaptacio = DB::table('reserves')
-            ->join('tipus_entrades', 'reserves.tipus_entrada_id', '=', 'tipus_entrades.id')
+            ->leftJoin('tipus_entrades', 'reserves.tipus_entrada_id', '=', 'tipus_entrades.id')
             ->where('reserves.estat', 'confirmada')
-            ->select('tipus_entrades.nom', DB::raw('SUM(tipus_entrades.preu) as total'))
-            ->groupBy('tipus_entrades.nom')
+            ->select(
+            DB::raw('COALESCE(tipus_entrades.nom, "Altres") as nom'),
+            DB::raw('SUM(COALESCE(tipus_entrades.preu, 0)) as total')
+        )
+            ->groupBy('nom')
             ->get();
 
-        // 2. Ocupació mitjana
+        // 2. Ocupació mitjana del cinema
         $totalSeients = Seient::count();
         $seientsVenuts = Seient::where('estat', 'venut')->count();
         $ocupacio = $totalSeients > 0 ? ($seientsVenuts / $totalSeients) * 100 : 0;
 
-        // 3. Reserves actives vs confirmades
-        $reservesActives = Reserva::where('estat', 'confirmada')->count();
+        // 3. Recompte de reserves confirmades
+        $reservesConfirmades = Reserva::where('reserves.estat', 'confirmada')->count();
 
-        // 4. Evolució de vendes (últims 7 dies)
+        // 4. Evolució de vendes dels últims 7 dies
         $evolucioVendes = Reserva::where('estat', 'confirmada')
             ->where('created_at', '>=', now()->subDays(7))
             ->select(DB::raw('DATE(created_at) as data'), DB::raw('count(*) as total'))
@@ -45,7 +49,7 @@ class StatsController extends Controller
             'data' => [
                 'recaptacio' => $recaptacio,
                 'ocupacio' => round($ocupacio, 2),
-                'reserves_actives' => $reservesActives,
+                'reserves_actives' => $reservesConfirmades,
                 'evolucio' => $evolucioVendes
             ]
         ]);
