@@ -25,6 +25,16 @@ export const useSeatsStore = defineStore('seats', {
         setSeats(seats: Seient[]) {
             this.seats = seats
         },
+        async fetchSeats(eventId: number, hora: string) {
+            try {
+                const response = await $fetch(`http://localhost:8000/api/esdeveniments/${eventId}?hora=${hora}`) as any
+                if (response?.data?.seients) {
+                    this.setSeats(response.data.seients)
+                }
+            } catch (error) {
+                console.error('Error fetching seats:', error)
+            }
+        },
         initSocket(eventId: number) {
             this.currentEventId = eventId
             const { onSeatLocked, onSeatUnlocked, onSeatsReleased, onSyncLockedSeats, onSeatsSold, joinEvent, cleanup } = useSocket()

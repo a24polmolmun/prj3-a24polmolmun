@@ -4,12 +4,20 @@ import { computed } from 'vue'
 
 const route = useRoute()
 const isAdminRoute = computed(() => route.path.startsWith('/admin'))
+const isSocketConnected = useState('isSocketConnected', () => true)
 </script>
 
 <template>
   <div class="min-h-screen font-sans">
+    <!-- Banner de Reconnexió -->
+    <transition name="slide-down">
+      <div v-if="isSocketConnected === false" class="bg-red-600 text-white text-[10px] font-black uppercase tracking-[0.2em] py-2 text-center sticky top-0 z-[200] shadow-lg">
+        ⚠️ Re-connectant al servidor en temps real...
+      </div>
+    </transition>
+
     <!-- Header públic -->
-    <header class="bg-gray-900 relative z-[100] border-b border-white/5 py-4">
+    <header :class="{ 'top-0': isSocketConnected !== false, 'top-[28px]': isSocketConnected === false }" class="bg-gray-900 relative z-[100] border-b border-white/5 py-4 transition-all duration-300">
       <div class="container mx-auto px-6 flex items-center justify-between">
         <NuxtLink to="/" class="text-xl font-black text-white uppercase italic tracking-tighter">Cinema <span class="text-accent">Pol</span></NuxtLink>
         <nav>
@@ -44,4 +52,14 @@ body {
 }
 .text-accent { color: #ffde00; }
 .bg-accent { background-color: #ffde00; }
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
 </style>

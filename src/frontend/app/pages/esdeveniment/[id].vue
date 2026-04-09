@@ -150,8 +150,21 @@ const confirmPurchase = async () => {
     }
   } catch (error: any) {
     console.error('Error en la compra:', error)
-    const message = error.data?.message || 'S\'ha produït un error en processar la compra. Torna-ho a intentar.'
-    alert(message)
+    
+    // Gestió d'errors de concurrència (409 Conflict)
+    if (error.status === 409) {
+      const message = error.data?.message || 'Ho sentim, algun dels seients ja no està disponible. El mapa s\'actualitzarà ara.'
+      alert(`⚠️ CONFLICTE DE RESERVA:\n\n${message}`)
+      
+      // Forçar recàrrega de seients per netejar el mapa
+      await seatsStore.fetchSeats(movieId, hora)
+      
+      // Tornar al pas del mapa perquè puguin triar-ne d'altres
+      currentStep.value = 2
+    } else {
+      const message = error.data?.message || 'S\'ha produït un error en processar la compra. Torna-ho a intentar.'
+      alert(message)
+    }
   } finally {
     isSubmitting.value = false
   }
