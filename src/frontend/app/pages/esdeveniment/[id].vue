@@ -118,14 +118,17 @@ const confirmPurchase = async () => {
   const seats = selectedSeats.value
 
   for (const typeId in ticketCounts.value) {
-    const count = ticketCounts.value[typeId]
-    for (let i = 0; i < count; i++) {
-      if (seats[seatIndex]) {
-        entradesPayload.push({
-          seient_id: seats[seatIndex].id,
-          tipus_id: Number(typeId)
-        })
-        seatIndex++
+    const count = Number(ticketCounts.value[typeId]) || 0
+    if (count > 0) {
+      for (let i = 0; i < count; i++) {
+        const currentSeat = seats[seatIndex]
+        if (currentSeat) {
+          entradesPayload.push({
+            seient_id: currentSeat.id,
+            tipus_id: Number(typeId)
+          })
+          seatIndex++
+        }
       }
     }
   }
