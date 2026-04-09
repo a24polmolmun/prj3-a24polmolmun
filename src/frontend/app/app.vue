@@ -3,7 +3,19 @@ import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 
 const route = useRoute()
-const isAdminRoute = computed(() => route.path.startsWith('/admin'))
+
+onMounted(() => {
+  // Netejar qualsevol Service Worker residual d'altres projectes en aquest port (localhost:3000)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister()
+        console.log('Service Worker desregistrat per evitar conflictes de caché')
+      }
+    })
+  }
+})
+
 const isSocketConnected = useState('isSocketConnected', () => true)
 </script>
 
@@ -17,7 +29,7 @@ const isSocketConnected = useState('isSocketConnected', () => true)
     </transition>
 
     <!-- Header públic -->
-    <header :class="{ 'top-0': isSocketConnected !== false, 'top-[28px]': isSocketConnected === false }" class="bg-gray-900 relative z-[100] border-b border-white/5 py-4 transition-all duration-300">
+    <header :class="{ 'hidden': $route.path.includes('/admin') }" class="bg-gray-900 relative z-[100] border-b border-white/5 py-4 transition-all duration-300">
       <div class="container mx-auto px-6 flex items-center justify-between">
         <NuxtLink to="/" class="text-xl font-black text-white uppercase italic tracking-tighter">Cinema <span class="text-accent">Pol</span></NuxtLink>
         <nav>
@@ -30,12 +42,12 @@ const isSocketConnected = useState('isSocketConnected', () => true)
       </div>
     </header>
 
-    <main :class="{ 'bg-slate-950': !isAdminRoute, 'bg-gray-50': isAdminRoute }" class="flex-1 flex flex-col">
+    <main :class="{ 'bg-slate-950': !$route.path.includes('/admin'), 'bg-white': $route.path.includes('/admin') }" class="flex-1 flex flex-col min-h-0">
       <NuxtPage />
     </main>
 
     <!-- Footer públic -->
-    <footer v-if="!isAdminRoute" class="bg-gray-900 py-12 border-t border-white/5">
+    <footer :class="{ 'hidden': $route.path.includes('/admin') }" class="bg-gray-900 py-12 border-t border-white/5">
       <div class="container mx-auto px-6 text-center">
         <p class="text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">&copy; 2026 Cinema Cat - Tots els drets reservats</p>
       </div>

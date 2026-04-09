@@ -30,7 +30,7 @@ const deleteMovie = async (id: number) => {
         </NuxtLink>
       </header>
 
-      <div class="grid grid-cols-1 gap-6 w-full">
+      <div class="flex flex-col gap-4 w-full">
         <div v-if="movies.length === 0" class="py-32 text-center bg-white shadow-sm rounded-[3rem] border-2 border-dashed border-slate-200">
            <p class="text-slate-400 font-black uppercase tracking-[0.3em]">No hi ha dades a la base de dades</p>
         </div>
@@ -38,33 +38,43 @@ const deleteMovie = async (id: number) => {
         <div 
           v-for="movie in movies" 
           :key="movie.id"
-          class="w-full bg-white shadow-sm p-8 rounded-[2.5rem] border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-accent/30 transition-all font-sans"
+          class="w-full bg-white shadow-md p-6 rounded-[2rem] border border-slate-100 flex flex-col lg:flex-row items-center justify-between gap-6 group hover:translate-x-2 transition-all duration-300"
         >
-          <div class="flex items-center gap-8 flex-1">
-             <div class="w-24 h-32 bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 flex-shrink-0 flex items-center justify-center relative">
+          <div class="flex items-center gap-8 flex-1 w-full lg:w-auto">
+             <div class="w-16 h-20 bg-slate-50 rounded-xl overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center relative">
                 <img v-if="movie.imatge" :src="movie.imatge.startsWith('/storage') ? 'http://localhost:8000' + movie.imatge : movie.imatge" class="w-full h-full object-cover">
-                <span v-else class="text-xs text-slate-300 font-black uppercase">Sense Imatge</span>
+                <span v-else class="text-[8px] text-slate-300 font-bold uppercase">Sense Imatge</span>
              </div>
-             <div>
-                <h3 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter group-hover:text-accent transition-colors">{{ movie.nom }}</h3>
-                <div class="flex gap-4 mt-2">
-                   <div class="flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full">
-                      <span class="text-[10px] font-black text-accent uppercase tracking-widest">{{ movie.sessions_count }} Sessions</span>
+             <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-4 mb-2">
+                    <h3 class="text-xl font-black text-slate-900 uppercase italic tracking-tighter truncate">{{ movie.nom }}</h3>
+                    <span class="px-2 py-0.5 bg-accent/10 text-accent text-[8px] font-black uppercase tracking-widest rounded-md border border-accent/20">PEL·LÍCULA</span>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                   <div class="flex items-center gap-1">
+                      <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Sessions:</span>
+                      <span class="text-[10px] font-black text-slate-700">{{ movie.sessions_count }}</span>
                    </div>
-                   <div class="flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full">
-                      <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">{{ movie.aforament_total }} Butaques</span>
+                   <div class="flex items-center gap-1">
+                      <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Butaques:</span>
+                      <span class="text-[10px] font-black text-slate-700">{{ movie.aforament_total }}</span>
+                   </div>
+                   <div class="hidden md:flex items-center gap-1">
+                      <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">ID:</span>
+                      <span class="text-[10px] font-black text-slate-700">#{{ movie.id }}</span>
                    </div>
                 </div>
-                <p class="text-slate-500 text-xs mt-3 line-clamp-1 italic max-w-xl">{{ movie.descripcio }}</p>
              </div>
           </div>
 
-          <div class="flex items-center gap-4">
-             <NuxtLink :to="`/admin/esdeveniments/${movie.id}`" class="px-6 py-3 bg-slate-100 text-slate-900/60 hover:text-slate-900 hover:bg-slate-200 rounded-xl font-bold uppercase tracking-widest text-[10px] border border-slate-200">
-                Editar
+          <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
+             <NuxtLink :to="`/admin/esdeveniments/${movie.id}`" class="px-5 py-3 bg-slate-900 text-white hover:bg-accent hover:text-black rounded-xl font-black uppercase tracking-widest text-[9px] transition-all shadow-sm">
+                Gestionar pel·lícula
              </NuxtLink>
-             <button @click="deleteMovie(movie.id)" class="px-6 py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-slate-900 rounded-xl font-bold uppercase tracking-widest text-[10px] border border-red-500/20 transition-all">
-                Eliminar
+             <button @click="deleteMovie(movie.id)" class="p-3 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all border border-red-100" title="Eliminar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
              </button>
           </div>
         </div>
