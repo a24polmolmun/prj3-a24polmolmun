@@ -19,34 +19,39 @@ class ReservaController extends Controller
     {
         $request->validate([
             'esdeveniment_id' => 'required|exists:esdeveniments,id',
-            'entrades' => 'required|array',
+            'entrades' => 'required|array|min:1|max:10',
             'entrades.*.seient_id' => 'required|exists:seients,id',
             'entrades.*.tipus_id' => 'required|exists:tipus_entrades,id',
             'nom' => 'required|string',
             'email' => 'required|email'
+        ], [
+            'entrades.max' => 'No pots comprar més de 10 butaques de cop.',
+            'entrades.required' => 'Has de seleccionar almenys una butaca.'
         ]);
 
         $entrades = $request->entrades;
         $seientsIds = array_column($entrades, 'seient_id');
         $eventId = $request->esdeveniment_id;
 
-        // Comprovar si tots els seients estan realment disponibles a la base de dades
-        $seientsDisponibles = Seient::whereIn('id', $seientsIds)
-            ->where('estat', 'disponible')
-            ->count();
-
-        if ($seientsDisponibles !== count($seientsIds)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Alguns seients ja no estan disponibles o ja han estat venuts'
-            ], 422);
-        }
-
         try {
             $localitzador = strtoupper(str()->random(6));
 
-            DB::transaction(function () use ($request, $entrades, $eventId, $localitzador) {
-                // Buscar o crear usuari pel seu email
+            DB::transaction(function () use ($request, $entrades, $eventId, $localitzador, $seientsIds) {
+                // 1. Bloquejar els seients a la BD per evitar que cap altra petició els llegeixi/escrigui simultàniament
+                $seients = Seient::whereIn('id', $seientsIds)->lockForUpdate()->get();
+
+                // 2. Validar que tots els seients existeixen i estan realment disponibles
+                if ($seients->count() !== count($seientsIds)) {
+                    throw new \Exception('Algunes de les butaques seleccionades ja no existeixen.');
+                }
+
+                foreach ($seients as $seient) {
+                    if ($seient->estat !== 'disponible') {
+                        throw new \Exception('La butaca ' . $seient->fila . $seient->numero . ' ja ha estat reservada per un altre usuari.');
+                    }
+                }
+
+                // 3. Buscar o crear usuari pel seu email
                 $usuari = User::firstOrCreate(
                 ['email' => $request->email],
                 [
@@ -55,7 +60,7 @@ class ReservaController extends Controller
                 ]
                 );
 
-                // Per a cada seient, creem la reserva i actualitzem el seu estat
+                // 4. Per a cada seient, creem la reserva i actualitzem el seu estat
                 foreach ($entrades as $entrada) {
                     Reserva::create([
                         'usuari_id' => $usuari->id,
@@ -66,7 +71,7 @@ class ReservaController extends Controller
                         'data_expiracio' => now()->addYear()
                     ]);
 
-                    // Actualitzem l'estat del seient a 'venut'
+                    // Actualitzem l'estat del seient a 'venut' (dins del lock)
                     Seient::where('id', $entrada['seient_id'])->update(['estat' => 'venut']);
                 }
             });
@@ -96,8 +101,8 @@ class ReservaController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'S\'ha produït un error inesperat durant la compra'
-            ], 500);
+                'message' => $e->getMessage() ?: 'S\'ha produït un error inesperat durant la compra'
+            ], 409); // Usem 409 Conflict per a Race Conditions
         }
     }
 
