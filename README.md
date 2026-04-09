@@ -10,8 +10,21 @@ Aquest fitxer conté l'explicació i manual d'instal·lació corresponent al pro
 * **Autor:** Pol Molina
 * **Nom del projecte:** Cinema Pol
 * **Petita descripció:** Plataforma web completa per a la reserva i compra d'entrades de cinema en temps real. Evita la sobrevenda mitjançant bloquejos de concurrència i WebSockets, i inclou un panell d'administració en viu.
-* **Adreça del gestor de tasques:** [ENLLAÇ AL TEU TAIGA/TRELLO AQUÍ]
-* **Adreça del prototip gràfic:** [ENLLAÇ AL TEU FIGMA/PENPOT AQUÍ]
+* **Diagrames:**
+  
+Diagrama de Casos d'Ús
+
+<img width="541" height="739" alt="image" src="https://github.com/user-attachments/assets/1d03b31a-6559-49a2-8a96-1bd77cb5d0a2" />
+
+Diagrama Entitat-Relació (ER)
+
+<img width="659" height="694" alt="image" src="https://github.com/user-attachments/assets/b507406c-e18c-46e3-8734-530a6e145ce0" />
+
+Diagrama de Seqüència (Procés de Compra + Socket.IO)
+
+<img width="1132" height="676" alt="image" src="https://github.com/user-attachments/assets/0f959141-d8fb-4c58-ac59-c0e60d9ffd18" />
+
+* **Diagrama de Pantalles:** https://stitch.withgoogle.com/projects/6361264361055921812
 * **URL de producció:** ["Pendent de desplegament"]
 
 ---
