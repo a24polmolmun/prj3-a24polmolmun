@@ -36,4 +36,22 @@ class Esdeveniment extends Model
     {
         return $this->hasManyThrough(Seient::class , Sessio::class , 'esdeveniment_id', 'sessio_id');
     }
+
+    /**
+     * Get the reviews for the event.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class , 'esdeveniment_id');
+    }
+
+    /**
+     * Get the average rating for the event.
+     */
+    public function getAverageRatingAttribute()
+    {
+        return round($this->reviews()->avg('rating'), 1) ?: 0;
+    }
+
+    protected $appends = ['average_rating'];
 }

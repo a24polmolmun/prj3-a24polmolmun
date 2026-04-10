@@ -6,6 +6,11 @@ use App\Http\Controllers\EsdevenimentController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\ReviewController;
+
+// Rutes de Ressenyes
+Route::get('/esdeveniments/{id}/reviews', [ReviewController::class , 'index']);
+Route::post('/reviews', [ReviewController::class , 'store']);
 
 // Rutes públiques per a la cartellera i butaques
 Route::get('/esdeveniments', [EsdevenimentController::class , 'index']);

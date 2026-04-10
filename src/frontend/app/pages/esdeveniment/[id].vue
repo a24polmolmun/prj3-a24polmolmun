@@ -4,11 +4,15 @@ import { onMounted, computed, ref, onUnmounted, watch } from 'vue'
 import { useSeatsStore } from '../../stores/seatsStore'
 import { useSocket } from '../../composables/useSocket'
 import SeatMap from '../../components/SeatMap.vue'
+import ReviewList from '../../components/ReviewList.vue'
+import ReviewForm from '../../components/ReviewForm.vue'
+import { useReviewStore } from '../../stores/reviewStore'
 
 const route = useRoute()
 const router = useRouter()
 const seatsStore = useSeatsStore()
 const { releaseAllSeats } = useSocket()
+const reviewStore = useReviewStore()
 
 const movieId = Number(route.params.id)
 const hora = route.query.hora as string
@@ -180,6 +184,7 @@ const selectedSeats = computed(() => {
 onMounted(() => {
   seatsStore.resetSelection()
   seatsStore.initSocket(movieId) // Inicialitzar la sincronització en temps real
+  reviewStore.fetchReviews(movieId)
 })
 
 onUnmounted(() => {
@@ -493,6 +498,23 @@ const updateCount = (typeId: number, delta: number) => {
               <span class="text-2xl group-hover:translate-x-1 transition-transform">💳</span>
             </span>
           </button>
+        </div>
+      </div>
+
+      <!-- Ressenyes Section -->
+      <div class="mt-20 border-t border-slate-100 pt-20">
+        <div class="flex flex-col lg:flex-row gap-16">
+          <div class="flex-1">
+            <h2 class="text-3xl font-black text-slate-900 mb-8 uppercase italic tracking-tighter">Ressenyes de la Comunitat</h2>
+            <ReviewList 
+              :reviews="reviewStore.reviews" 
+              :averageRating="reviewStore.averageRating" 
+              :totalReviews="reviewStore.totalReviews" 
+            />
+          </div>
+          <div class="w-full lg:w-[450px]">
+            <ReviewForm :esdeveniment_id="movieId" />
+          </div>
         </div>
       </div>
     </div>
