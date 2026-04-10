@@ -22,12 +22,12 @@ const handleLogin = () => {
   <div class="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
     <div class="max-w-md w-full bg-white rounded-[3rem] p-12 shadow-sm border border-slate-100 relative">
         <div class="relative z-10">
-            <header class="text-center mb-10">
+            <div class="text-center mb-10 bg-gray-900 py-8 rounded-[2rem] shadow-inner border border-white/5">
                 <h1 class="text-3xl font-black text-accent uppercase italic tracking-tighter mb-2">
                     Accés Administració
                 </h1>
-                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Identifica't per gestionar el cinema</p>
-            </header>
+                <p class="text-white/40 text-[10px] font-black uppercase tracking-widest">Identifica't per gestionar el cinema</p>
+            </div>
 
             <form @submit.prevent="handleLogin" class="space-y-6">
                 <div class="space-y-2">

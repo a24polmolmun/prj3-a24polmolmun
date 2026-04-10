@@ -106,38 +106,44 @@ const totalRevenue = computed(() => {
       <!-- KPI Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
         <!-- Live Users -->
-        <div class="bg-white shadow-sm p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:border-accent/40 transition-all">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-3xl rounded-full"></div>
+        <div class="bg-gradient-to-br from-white to-slate-50 shadow-md p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:shadow-xl hover:border-accent/40 transition-all">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-accent/10 blur-3xl rounded-full translate-x-12 -translate-y-12"></div>
           <p class="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-6 flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-accent animate-ping"></span>
-            En Directe
+            En Directe / Live
           </p>
-          <p class="text-6xl font-black text-slate-900 mb-2 tabular-nums">{{ connectedUsers }}</p>
-          <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Usuaris connectats</p>
+          <div class="flex items-baseline gap-2">
+            <p class="text-6xl font-black text-slate-900 mb-2 tabular-nums">{{ connectedUsers }}</p>
+            <p class="text-slate-400 font-bold text-xs uppercase italic">Actius</p>
+          </div>
+          <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-2">Usuaris navegant ara</p>
         </div>
 
         <!-- Sales -->
-        <div class="bg-white shadow-sm p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:border-accent/40 transition-all">
-          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6">Recaptació Total</p>
+        <div class="bg-gradient-to-br from-white to-slate-50 shadow-md p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:shadow-xl hover:border-accent/40 transition-all">
+          <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-slate-200/20 blur-2xl rounded-full"></div>
+          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6 italic">Ingressos Totals</p>
           <p class="text-6xl font-black text-slate-900 mb-2 tabular-nums">
             {{ totalRevenue }}<span class="text-2xl text-accent font-black ml-1">€</span>
           </p>
-          <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Compres confirmades</p>
+          <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-2">Vendes confirmades</p>
         </div>
 
         <!-- Reservations -->
-        <div class="bg-white shadow-sm p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:border-accent/40 transition-all">
-          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6">Reserves</p>
+        <div class="bg-gradient-to-br from-white to-slate-50 shadow-md p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:shadow-xl hover:border-accent/40 transition-all">
+          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6 italic">Entrades</p>
           <p class="text-6xl font-black text-slate-900 mb-2 tabular-nums">{{ stats.reserves_actives }}</p>
-          <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Entrades venudes</p>
+          <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-2">Reserves totals</p>
         </div>
 
         <!-- Occupancy -->
-        <div class="bg-white shadow-sm p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:border-accent/40 transition-all">
-          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6">Ocupació Mitjana</p>
-          <p class="text-6xl font-black text-slate-900 mb-2 tabular-nums">{{ stats.ocupacio }}<span class="text-2xl text-accent font-black ml-1">%</span></p>
-          <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
-             <div class="bg-accent h-full transition-all duration-1000" :style="{ width: stats.ocupacio + '%' }"></div>
+        <div class="bg-gradient-to-br from-white to-slate-50 shadow-md p-8 rounded-[2.5rem] border border-slate-200 relative overflow-hidden group hover:shadow-xl hover:border-accent/40 transition-all flex flex-col justify-between">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6 italic">Ocupació Mitjana</p>
+            <p class="text-6xl font-black text-slate-900 mb-2 tabular-nums">{{ stats.ocupacio }}<span class="text-2xl text-accent font-black ml-1">%</span></p>
+          </div>
+          <div class="w-full bg-slate-100 h-2 rounded-full mt-4 overflow-hidden border border-slate-200">
+             <div class="bg-accent h-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,222,0,0.5)]" :style="{ width: stats.ocupacio + '%' }"></div>
           </div>
         </div>
       </div>

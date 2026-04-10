@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -20,21 +20,25 @@ const form = ref({
 const selectedFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
 
-if (isEdit) {
-  // Recuperar dades de la pel·lícula per editar (només al client)
-  const { data } = await useFetch(`http://localhost:8000/api/admin/esdeveniments/${route.params.id}`, { server: false })
-  watch(data, (newVal) => {
-    if (newVal) {
+const { data: movieResponse } = useFetch(() => isEdit ? `http://localhost:8000/api/admin/esdeveniments/${route.params.id}` : null, { 
+    server: false,
+    immediate: isEdit 
+})
+
+watch(movieResponse, (newVal) => {
+    if (newVal && (newVal as any).success) {
       const movieData = (newVal as any).data
       form.value = {
+        ...form.value,
         ...movieData,
         sessions: movieData.sessions || [],
         preus: movieData.tipus_entrades || []
       }
       imagePreview.value = movieData.imatge
     }
-  }, { immediate: true })
-} else {
+}, { immediate: true })
+
+if (!isEdit) {
   form.value.sessions = [
     { dia: new Date().toISOString().slice(0, 10), hora: '17:00' },
     { dia: new Date().toISOString().slice(0, 10), hora: '19:30' },
@@ -113,53 +117,77 @@ const save = async () => {
 </script>
 
 <template>
-  <div class="flex flex-1 text-slate-900 font-sans">
+  <div class="flex flex-1 text-slate-900 font-sans min-h-screen bg-white">
     <AdminSidebar />
     
-    <main class="flex-1 w-full p-12 overflow-y-auto">
-      <header class="flex flex-col md:flex-row justify-between items-center mb-12 bg-white shadow-sm p-8 rounded-2xl text-center md:text-left gap-6">
-        <div class="flex flex-col items-center md:items-start">
-          <h2 class="text-5xl font-black tracking-tighter uppercase italic text-accent mb-2">
-            {{ isEdit ? 'Editar Pel·lícula' : 'Nova Pel·lícula' }}
-          </h2>
-          <p class="text-slate-500 font-medium italic">Configura els detalls generals, sessions i preus</p>
-        </div>
-        <div class="flex gap-4">
-           <NuxtLink to="/admin/esdeveniments" class="px-8 py-4 text-slate-500 font-black uppercase tracking-widest text-xs hover:text-slate-900 transition-all">Cancel·lar</NuxtLink>
-           <button @click="save" class="bg-accent text-black px-12 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-100 transition-all shadow-xl">
-             Guardar
-           </button>
+    <main class="flex-1 w-full p-8 lg:p-12 overflow-y-auto">
+      <!-- Header -->
+      <header class="!bg-transparent !static !shadow-none !p-0 !mb-10 !z-auto">
+        <div class="bg-white shadow-md p-8 lg:p-10 rounded-2xl border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <h2 class="text-4xl font-black tracking-tighter uppercase italic text-slate-900 mb-1">
+              {{ isEdit ? 'Editar Pel·lícula' : 'Nova Pel·lícula' }}
+            </h2>
+            <p class="text-slate-500 font-medium text-sm">Gestiona els detalls, sessions i preus de la cartellera</p>
+          </div>
+          <div class="flex items-center gap-4 w-full md:w-auto">
+             <NuxtLink to="/admin/esdeveniments" class="px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-xs hover:text-slate-900 transition-all">
+               Cancel·lar
+             </NuxtLink>
+             <button @click="save" class="bg-accent text-black px-10 py-3.5 rounded-xl font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-md active:scale-95">
+               Guardar Canvis
+             </button>
+          </div>
         </div>
       </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 font-sans">
-        <!-- Detalls Generals -->
-        <section class="bg-white shadow-sm p-10 rounded-[3rem] border border-slate-200 space-y-8">
-          <h3 class="text-xl font-black uppercase italic tracking-tighter text-slate-400 mb-6">Detalls Generals</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 font-sans pb-20">
+        <!-- Detalls Generals (Esquerra - 8 columnes) -->
+        <section class="lg:col-span-8 bg-white shadow-md p-8 lg:p-10 rounded-2xl border border-slate-100 space-y-8">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-6 mb-2">
+            <div class="w-2 h-6 bg-accent rounded-full"></div>
+            <h3 class="text-lg font-black uppercase tracking-tight text-slate-800">Detalls Generals</h3>
+          </div>
           
-          <div class="grid grid-cols-1 gap-6">
+          <div class="grid grid-cols-1 gap-8">
             <div class="space-y-2">
-              <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Títol</label>
-              <input v-model="form.nom" type="text" class="w-full bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" />
+              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Títol de la pel·lícula</label>
+              <input 
+                v-model="form.nom" 
+                type="text" 
+                placeholder="Ex: Inception" 
+                class="w-full bg-white border border-slate-200 rounded-lg px-5 py-3.5 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none font-bold placeholder:text-slate-300 transition-all" 
+              />
             </div>
             
             <div class="space-y-2">
-              <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Descripció</label>
-              <textarea v-model="form.descripcio" rows="4" class="w-full bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-medium italic"></textarea>
+              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Descripció / Sinopsi</label>
+              <textarea 
+                v-model="form.descripcio" 
+                rows="5" 
+                placeholder="Escriu una breu descripció..."
+                class="w-full bg-white border border-slate-200 rounded-lg px-5 py-3.5 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none font-medium text-slate-600 transition-all"
+              ></textarea>
             </div>
 
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div class="space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Aforament (20-120)</label>
-                <input v-model="form.aforament_total" type="number" min="20" max="120" class="w-full bg-white shadow-sm border border-slate-200 rounded-2xl px-6 py-4 focus:border-accent/50 outline-none font-bold" />
+                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Aforament (20-120)</label>
+                <input 
+                  v-model="form.aforament_total" 
+                  type="number" 
+                  min="20" 
+                  max="120" 
+                  class="w-full bg-white border border-slate-200 rounded-lg px-5 py-3.5 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none font-bold" 
+                />
               </div>
               <div class="space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Pujar Imatge (PNG/JPG)</label>
+                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Pòster de la pel·lícula</label>
                 <div class="relative group">
                     <input type="file" @change="onFileChange" accept="image/*" class="hidden" id="image-upload" />
-                    <label for="image-upload" class="flex items-center justify-between w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl px-6 py-4 cursor-pointer hover:border-accent/50 transition-all">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ selectedFile ? selectedFile.name : 'Triar fitxer...' }}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <label for="image-upload" class="flex items-center justify-between w-full bg-slate-50 border border-slate-200 rounded-lg px-5 py-3.5 cursor-pointer hover:bg-slate-100 transition-all">
+                        <span class="text-xs font-bold text-slate-500 truncate max-w-[200px]">{{ selectedFile ? selectedFile.name : 'Selecciona una imatge...' }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </label>
@@ -167,48 +195,66 @@ const save = async () => {
               </div>
             </div>
 
-            <!-- Previsualització -->
-            <div v-if="imagePreview" class="pt-4">
-                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Previsualització</p>
-                <div class="relative w-32 aspect-[2/3] rounded-2xl overflow-hidden border-4 border-white shadow-lg">
+            <!-- Previsualització de la Imatge -->
+            <div v-if="imagePreview" class="pt-2">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">Vista prèvia del pòster</p>
+                <div class="relative w-40 aspect-[2/3] rounded-xl overflow-hidden border border-slate-200 shadow-sm transition-transform hover:scale-105">
                     <img :src="imagePreview.startsWith('blob:') ? imagePreview : (imagePreview.startsWith('/storage') ? 'http://localhost:8000' + imagePreview : imagePreview)" class="w-full h-full object-cover" />
                 </div>
             </div>
           </div>
         </section>
 
-        <!-- Sessions i Preus -->
-        <div class="space-y-12">
-          <!-- Sessions -->
-          <section class="bg-white shadow-sm p-10 rounded-[3rem] border border-slate-200">
-            <div class="flex justify-between items-center mb-8">
-               <h3 class="text-xl font-black uppercase italic tracking-tighter text-slate-400">Sessions</h3>
-               <button @click="addSession" class="text-accent font-black uppercase tracking-widest text-[10px] hover:text-slate-900 transition-all">+ Afegir Sessió</button>
+        <!-- Sessions i Preus (Dreta - 4 columnes) -->
+        <div class="lg:col-span-4 space-y-8">
+          <!-- Secció de Sessions -->
+          <section class="bg-white shadow-md p-8 rounded-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-50">
+               <h3 class="text-md font-black uppercase tracking-tight text-slate-800">Sessions</h3>
+               <button @click="addSession" class="bg-slate-50 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all border border-slate-200">
+                 + Afegir
+               </button>
             </div>
-            <div class="space-y-4">
-               <div v-for="(s, index) in form.sessions" :key="index" class="flex items-center gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
-                  <input v-model="s.dia" type="date" class="flex-1 bg-transparent border-none outline-none font-bold uppercase tracking-widest text-slate-700" />
-                  <input v-model="s.hora" type="time" class="w-24 bg-transparent border-none outline-none font-bold text-accent" />
-                  <button @click="removeSession(index)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all">✕</button>
+            <div class="space-y-3">
+               <div v-for="(s, index) in form.sessions" :key="index" class="flex items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 group transition-all hover:bg-white hover:shadow-sm">
+                  <div class="flex flex-1 items-center gap-3">
+                    <input v-model="s.dia" type="date" class="bg-transparent border-none outline-none font-bold text-[11px] text-slate-700 w-full" />
+                    <input v-model="s.hora" type="time" class="bg-transparent border-none outline-none font-black text-[11px] text-yellow-600 w-20" />
+                  </div>
+                  <button @click="removeSession(index)" class="text-slate-300 hover:text-red-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                </div>
             </div>
           </section>
 
-          <!-- Preus -->
-          <section class="bg-white shadow-sm p-10 rounded-[3rem] border border-slate-200">
-            <div class="flex justify-between items-center mb-8">
-               <h3 class="text-xl font-black uppercase italic tracking-tighter text-slate-400">Preus</h3>
-               <button @click="addPrice" class="text-accent font-black uppercase tracking-widest text-[10px] hover:text-slate-900 transition-all">+ Afegir Preu</button>
+          <!-- Secció de Preus -->
+          <section class="bg-white shadow-md p-8 rounded-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-50">
+               <h3 class="text-md font-black uppercase tracking-tight text-slate-800">Preus</h3>
+               <button @click="addPrice" class="bg-slate-50 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all border border-slate-200">
+                 + Afegir
+               </button>
             </div>
-            <div class="space-y-4">
-               <div v-for="(p, index) in form.preus" :key="index" class="flex items-center gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
-                  <input v-model="p.nom" type="text" placeholder="Categoria" class="flex-1 bg-transparent border-none outline-none font-bold uppercase tracking-widest text-slate-700" />
-                  <div class="flex items-center gap-2">
-                    <input v-model="p.preu" type="number" step="0.5" class="w-16 bg-transparent border-none outline-none font-bold text-accent text-right" />
-                    <input type="hidden" v-model="p.id" />
-                    <span class="text-accent font-black">€</span>
+            <div class="space-y-3">
+               <div v-for="(p, index) in form.preus" :key="index" class="flex items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100 group transition-all hover:bg-white hover:shadow-sm">
+                  <input 
+                    v-model="p.nom" 
+                    type="text" 
+                    placeholder="Nom entrada" 
+                    class="flex-1 bg-transparent border-none outline-none font-bold text-[11px] text-slate-700 placeholder:text-slate-300"
+                  />
+                  <div class="flex items-center gap-1.5">
+                    <input v-model="p.preu" type="number" step="0.5" class="w-12 bg-transparent border-none outline-none font-black text-[11px] text-yellow-600 text-right" />
+                    <span class="text-[10px] font-black text-slate-400">€</span>
                   </div>
-                  <button @click="removePrice(index)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all">✕</button>
+                  <button @click="removePrice(index)" class="text-slate-300 hover:text-red-500 transition-colors ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                </div>
             </div>
           </section>

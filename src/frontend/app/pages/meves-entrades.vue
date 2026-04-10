@@ -55,7 +55,7 @@ const formatDate = (dateStr: string) => {
     <main class="flex-1 container mx-auto px-6 py-12 max-w-4xl">
       
       <!-- Search Box -->
-      <div class="bg-white rounded-[2rem] p-8 shadow-xl border border-gray-100 mb-12">
+      <div class="bg-white rounded-[2rem] p-8 shadow-xl border border-gray-100 mb-12 mt-16">
         <div class="flex flex-col md:flex-row gap-6">
           <div class="flex-1 space-y-4">
             <div>

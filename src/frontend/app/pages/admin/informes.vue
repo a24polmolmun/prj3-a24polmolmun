@@ -80,12 +80,12 @@ const totalRevenue = computed(() => {
            </div>
            
            <!-- Simulated Bar Chart -->
-           <div class="flex items-end justify-between h-64 gap-4 px-10 border-b border-slate-200">
+           <div class="flex items-end justify-center h-64 gap-8 px-10 border-b border-slate-200">
               <div 
                 v-for="day in stats.evolucio" 
                 :key="day.data" 
-                class="flex-1 bg-accent/20 border-t-4 border-accent rounded-t-xl group relative cursor-crosshair hover:bg-accent/40 transition-all"
-                :style="{ height: (day.total * 30) + 'px' }"
+                class="min-w-[60px] max-w-[100px] w-full bg-accent/20 border-t-4 border-accent rounded-t-xl group relative cursor-crosshair hover:bg-accent/40 transition-all"
+                :style="{ height: Math.max(day.total * 30, 8) + 'px' }"
               >
                  <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-black px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-all">
                     {{ day.total }} VENUTS
