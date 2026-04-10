@@ -117,25 +117,27 @@ const save = async () => {
 </script>
 
 <template>
-  <div class="flex flex-1 text-slate-900 font-sans min-h-screen bg-slate-50">
+  <div class="flex flex-1 text-slate-900 font-sans min-h-screen bg-white">
     <AdminSidebar />
     
     <main class="flex-1 w-full p-8 lg:p-12 overflow-y-auto">
       <!-- Header -->
-      <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
-        <div>
-          <h2 class="text-4xl font-black tracking-tighter uppercase italic text-slate-900 mb-1">
-            {{ isEdit ? 'Editar Pel·lícula' : 'Nova Pel·lícula' }}
-          </h2>
-          <p class="text-slate-500 font-medium text-sm">Gestiona els detalls, sessions i preus de la cartellera</p>
-        </div>
-        <div class="flex items-center gap-4 w-full md:w-auto">
-           <NuxtLink to="/admin/esdeveniments" class="px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-xs hover:text-slate-900 transition-all">
-             Cancel·lar
-           </NuxtLink>
-           <button @click="save" class="bg-accent text-black px-10 py-3.5 rounded-xl font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-md active:scale-95">
-             Guardar Canvis
-           </button>
+      <header class="!bg-transparent !static !shadow-none !p-0 !mb-10 !z-auto">
+        <div class="bg-white shadow-md p-8 lg:p-10 rounded-2xl border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <h2 class="text-4xl font-black tracking-tighter uppercase italic text-slate-900 mb-1">
+              {{ isEdit ? 'Editar Pel·lícula' : 'Nova Pel·lícula' }}
+            </h2>
+            <p class="text-slate-500 font-medium text-sm">Gestiona els detalls, sessions i preus de la cartellera</p>
+          </div>
+          <div class="flex items-center gap-4 w-full md:w-auto">
+             <NuxtLink to="/admin/esdeveniments" class="px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-xs hover:text-slate-900 transition-all">
+               Cancel·lar
+             </NuxtLink>
+             <button @click="save" class="bg-accent text-black px-10 py-3.5 rounded-xl font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-md active:scale-95">
+               Guardar Canvis
+             </button>
+          </div>
         </div>
       </header>
 

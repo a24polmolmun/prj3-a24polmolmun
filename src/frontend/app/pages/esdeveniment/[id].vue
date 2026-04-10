@@ -198,7 +198,7 @@ const updateCount = (typeId: number, delta: number) => {
 </script>
 
 <template>
-  <div class="event-page-bg min-h-screen py-8 bg-slate-950 text-white">
+  <div class="event-page-bg min-h-screen py-8 bg-white text-slate-900">
     <div class="container mx-auto px-4 pb-32">
       <!-- Loading State -->
       <div v-if="pending" class="flex flex-col items-center justify-center py-40 space-y-6">
@@ -215,7 +215,7 @@ const updateCount = (typeId: number, delta: number) => {
       <!-- Main Flow -->
       <template v-else>
         <!-- Hero Section with Poster -->
-        <div class="relative mb-12 rounded-[3.5rem] overflow-hidden bg-slate-900 border border-white/10 shadow-3xl group">
+        <div class="relative mb-12 rounded-[3.5rem] overflow-hidden bg-slate-900 border border-white/5 shadow-xl group">
           <div class="flex flex-col md:flex-row">
             <!-- Poster Placeholder -->
             <div class="w-full md:w-80 lg:w-96 aspect-[2/3] relative overflow-hidden flex-shrink-0">
@@ -234,7 +234,7 @@ const updateCount = (typeId: number, delta: number) => {
                  }"
                >
                  <div class="absolute inset-0 flex flex-col items-center justify-center p-10 text-center">
-                    <span class="text-8xl mb-6 drop-shadow-2xl">🎬</span>
+                    <span class="text-8xl mb-6 drop-shadow-2xl"></span>
                     <h3 class="text-2xl font-black text-white/20 uppercase tracking-[0.3em] leading-tight">{{ movie.nom }}</h3>
                  </div>
                </div>
@@ -299,9 +299,9 @@ const updateCount = (typeId: number, delta: number) => {
         </div>
 
         <!-- Step 1: Ticket Selection -->
-        <div v-if="currentStep === 1" class="max-w-2xl mx-auto bg-slate-900/80 rounded-[2.5rem] p-10 border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
+        <div v-if="currentStep === 1" class="max-w-2xl mx-auto bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-xl">
           <div class="text-center mb-10">
-            <h2 class="text-3xl font-black text-white mb-2">Tria les teves entrades</h2>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">Tria les teves entrades</h2>
             <div class="h-1 w-20 bg-accent mx-auto rounded-full"></div>
           </div>
           
@@ -310,35 +310,35 @@ const updateCount = (typeId: number, delta: number) => {
             <div 
               v-for="tipus in movie.tipus_entrades" 
               :key="tipus.id"
-              class="flex items-center justify-between p-6 bg-white/[0.03] rounded-3xl border border-white/5 hover:bg-white/[0.06] hover:border-accent/40 hover:scale-[1.02] transition-all duration-300 group"
+              class="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:border-accent/40 hover:scale-[1.02] transition-all duration-300 group shadow-sm hover:shadow-md"
             >
               <div class="flex-1 mr-6">
-                <h3 class="text-xl font-bold text-white group-hover:text-accent transition-colors">{{ tipus.nom }}</h3>
-                <p class="text-accent/80 font-bold mt-1 text-lg">{{ Number(tipus.preu).toFixed(2) }} €</p>
-                <p v-if="tipus.nom === 'Reduïda'" class="text-white/30 text-xs mt-3 italic leading-relaxed font-medium">Persones amb una discapacitat del 33% o superior i persones amb el carnet Jove d'entre 17 a 30 anys</p>
+                <h3 class="text-xl font-bold text-slate-900 group-hover:text-yellow-600 transition-colors">{{ tipus.nom }}</h3>
+                <p class="text-yellow-600 font-bold mt-1 text-lg">{{ Number(tipus.preu).toFixed(2) }} €</p>
+                <p v-if="tipus.nom === 'Reduïda'" class="text-slate-400 text-xs mt-3 italic leading-relaxed font-medium">Persones amb una discapacitat del 33% o superior i persones amb el carnet Jove d'entre 17 a 30 anys</p>
               </div>
               <div class="flex items-center gap-6">
-                <button @click="updateCount(tipus.id, -1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-red-500 hover:text-white transition-all flex items-center justify-center text-2xl font-black border border-white/10">-</button>
-                <span class="text-3xl font-black text-white w-10 text-center">{{ ticketCounts[tipus.id] || 0 }}</span>
-                <button @click="updateCount(tipus.id, 1)" class="w-12 h-12 rounded-2xl bg-white/5 text-white hover:bg-accent hover:text-black transition-all flex items-center justify-center text-2xl font-black border border-white/10">+</button>
+                <button @click="updateCount(tipus.id, -1)" class="w-12 h-12 rounded-2xl bg-white text-slate-700 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center text-2xl font-black border border-slate-200">-</button>
+                <span class="text-3xl font-black text-slate-900 w-10 text-center">{{ ticketCounts[tipus.id] || 0 }}</span>
+                <button @click="updateCount(tipus.id, 1)" class="w-12 h-12 rounded-2xl bg-white text-slate-700 hover:bg-accent hover:text-black transition-all flex items-center justify-center text-2xl font-black border border-slate-200">+</button>
               </div>
             </div>
           </div>
 
-          <div class="mt-12 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div class="mt-12 pt-10 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
             <div class="text-center md:text-left">
-              <p class="text-white/40 text-xs font-black uppercase tracking-[0.2em] mb-1">Inversió total</p>
-              <p class="text-5xl font-black text-white tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{{ totalPrice.toFixed(2) }}<span class="text-2xl ml-1 text-accent">€</span></p>
+              <p class="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-1">Inversió total</p>
+              <p class="text-5xl font-black text-slate-900 tabular-nums drop-shadow-[0_0_15px_rgba(0,0,0,0.05)]">{{ totalPrice.toFixed(2) }}<span class="text-2xl ml-1 text-yellow-600">€</span></p>
               <div class="flex items-center gap-2 mt-2 justify-center md:justify-start">
                 <div class="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
-                <p class="text-accent text-sm font-black uppercase tracking-widest">{{ totalTickets }} entrades</p>
+                <p class="text-yellow-600 text-sm font-black uppercase tracking-widest">{{ totalTickets }} entrades</p>
               </div>
             </div>
             <button 
               @click="nextStep"
               :disabled="totalTickets === 0"
-              class="group relative w-full md:w-auto px-16 py-5 rounded-2xl font-black text-xl transition-all shadow-[0_20px_40px_-10px_rgba(255,222,0,0.3)] disabled:shadow-none active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed overflow-hidden mt-4 md:mt-0"
-              :class="totalTickets > 0 ? 'bg-accent text-black hover:bg-white' : 'bg-white/10 text-white/40'"
+              class="group relative w-full md:w-auto px-16 py-5 rounded-2xl font-black text-xl transition-all shadow-xl disabled:shadow-none active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed overflow-hidden mt-4 md:mt-0"
+              :class="totalTickets > 0 ? 'bg-accent text-black hover:bg-slate-900 hover:text-white' : 'bg-slate-100 text-slate-400'"
             >
               <span class="relative z-10 flex items-center gap-3">
                 Següent pas
@@ -351,16 +351,16 @@ const updateCount = (typeId: number, delta: number) => {
         <!-- Step 2: Seat Map -->
         <div v-else-if="currentStep === 2" class="animate-fade-in">
           <!-- Timer Header (Simplified) -->
-          <div class="max-w-md mx-auto mb-10 bg-slate-900 border-2 border-accent/20 rounded-[2rem] p-6 flex items-center justify-between shadow-2xl backdrop-blur-xl group">
+          <div class="max-w-md mx-auto mb-10 bg-white border-2 border-yellow-500/20 rounded-[2rem] p-6 flex items-center justify-between shadow-xl backdrop-blur-xl group">
             <div class="flex items-center gap-5">
               <div>
-                <p class="text-accent/60 text-[10px] font-black uppercase tracking-[0.2em] mb-0.5">Finalitza la reserva en</p>
-                <p class="text-4xl font-mono font-black text-accent tabular-nums drop-shadow-[0_0_15px_rgba(255,222,0,0.3)]">{{ formattedTime }}</p>
+                <p class="text-yellow-600/60 text-[10px] font-black uppercase tracking-[0.2em] mb-0.5">Finalitza la reserva en</p>
+                <p class="text-4xl font-mono font-black text-yellow-600 tabular-nums drop-shadow-[0_0_15px_rgba(255,222,0,0.1)]">{{ formattedTime }}</p>
               </div>
             </div>
-            <div class="text-right border-l border-white/10 pl-6">
-              <p class="text-white/20 text-[10px] uppercase font-bold tracking-widest mb-1">Entrades</p>
-              <p class="text-2xl font-black text-white">{{ totalTickets }}</p>
+            <div class="text-right border-l border-slate-100 pl-6">
+              <p class="text-slate-300 text-[10px] uppercase font-bold tracking-widest mb-1">Entrades</p>
+              <p class="text-2xl font-black text-slate-900">{{ totalTickets }}</p>
             </div>
           </div>
 
@@ -371,35 +371,35 @@ const updateCount = (typeId: number, delta: number) => {
 
         <!-- Step 3: Personal Data Form -->
         <div v-else-if="currentStep === 3" class="max-w-xl mx-auto animate-fade-in pb-20">
-          <div class="flex items-center justify-center gap-4 mb-8 text-accent font-black uppercase tracking-widest text-sm bg-slate-900/50 py-3 rounded-2xl border border-accent/20">
+          <div class="flex items-center justify-center gap-4 mb-8 text-yellow-600 font-black uppercase tracking-widest text-sm bg-white py-3 rounded-2xl border border-yellow-500/20 shadow-sm">
             <span class="animate-pulse">●</span>
             TEMPS RESTANT PER FINALITZAR: {{ formattedTime }}
           </div>
 
-          <div class="bg-slate-900/80 rounded-[2.5rem] p-10 border border-white/10 shadow-2xl backdrop-blur-2xl">
+          <div class="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-2xl">
             <div class="text-center mb-10">
-              <h2 class="text-3xl font-black text-white mb-2">Dades de contacte</h2>
-              <p class="text-white/40 text-sm italic font-medium">Necessitem aquestes dades per enviar-te les entrades</p>
+              <h2 class="text-3xl font-black text-slate-900 mb-2">Dades de contacte</h2>
+              <p class="text-slate-400 text-sm italic font-medium">Necessitem aquestes dades per enviar-te les entrades</p>
             </div>
 
             <div class="space-y-6">
               <div class="space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Nom complet</label>
+                <label class="text-xs font-black uppercase tracking-widest text-yellow-600 ml-2">Nom complet</label>
                 <input 
                   v-model="userName"
                   type="text" 
                   placeholder="Ex: Joan Garcia"
-                  class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all font-bold text-lg"
+                  class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:border-accent/50 focus:bg-white transition-all font-bold text-lg"
                 />
               </div>
 
               <div class="space-y-2">
-                <label class="text-xs font-black uppercase tracking-widest text-accent ml-2">Correu electrònic</label>
+                <label class="text-xs font-black uppercase tracking-widest text-yellow-600 ml-2">Correu electrònic</label>
                 <input 
                   v-model="userEmail"
                   type="email" 
                   placeholder="joan@exemple.com"
-                  class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-accent/50 focus:bg-white/10 transition-all font-bold text-lg"
+                  class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:border-accent/50 focus:bg-white transition-all font-bold text-lg"
                 />
               </div>
             </div>
@@ -408,7 +408,7 @@ const updateCount = (typeId: number, delta: number) => {
               <button 
                 @click="confirmPurchase"
                 :disabled="isSubmitting || !userName || !userEmail"
-                class="w-full py-5 bg-accent text-black font-black rounded-2xl hover:bg-white transition-all active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed shadow-[0_20px_40px_-10px_rgba(255,222,0,0.3)] text-xl flex items-center justify-center gap-3"
+                class="w-full py-5 bg-accent text-black font-black rounded-2xl hover:bg-slate-900 hover:text-white transition-all active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed shadow-xl text-xl flex items-center justify-center gap-3"
               >
                 <template v-if="isSubmitting">
                   <span class="w-6 h-6 border-4 border-black/20 border-t-black rounded-full animate-spin"></span>
@@ -418,7 +418,7 @@ const updateCount = (typeId: number, delta: number) => {
                   FINALITZAR COMPRA 🛒
                 </template>
               </button>
-              <button @click="currentStep = 2" class="w-full py-4 text-white/40 font-black uppercase tracking-widest hover:text-white transition-all text-sm">
+              <button @click="currentStep = 2" class="w-full py-4 text-slate-400 font-black uppercase tracking-widest hover:text-slate-900 transition-all text-sm">
                 ← Tornar a la selecció de butaques
               </button>
             </div>
@@ -427,29 +427,29 @@ const updateCount = (typeId: number, delta: number) => {
 
         <!-- Step 4: Purchase Success -->
         <div v-else-if="currentStep === 4" class="max-w-2xl mx-auto animate-fade-in text-center pb-20">
-          <div class="bg-slate-900/80 rounded-[3.5rem] p-12 border border-white/10 shadow-2xl backdrop-blur-2xl relative overflow-hidden">
+          <div class="bg-white rounded-[3.5rem] p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
             <!-- Decorative Glow -->
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-accent/20 blur-[100px] rounded-full -z-10"></div>
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-accent/10 blur-[100px] rounded-full -z-10"></div>
             
-            <div class="w-24 h-24 bg-accent text-black rounded-3xl flex items-center justify-center mx-auto mb-8 text-5xl shadow-[0_0_50px_rgba(255,222,0,0.3)]">✓</div>
+            <div class="w-24 h-24 bg-accent text-black rounded-3xl flex items-center justify-center mx-auto mb-8 text-5xl shadow-xl">✓</div>
             
-            <h2 class="text-4xl font-black text-white mb-4 tracking-tighter uppercase italic">Compra realitzada!</h2>
-            <p class="text-white/40 text-lg font-medium italic mb-12">Hem enviat les teves entrades al correu <span class="text-accent">{{ userEmail }}</span></p>
+            <h2 class="text-4xl font-black text-slate-900 mb-4 tracking-tighter uppercase italic">Compra realitzada!</h2>
+            <p class="text-slate-400 text-lg font-medium italic mb-12">Hem enviat les teves entrades al correu <span class="text-yellow-600 font-bold">{{ userEmail }}</span></p>
 
-            <div class="bg-white/5 border-2 border-dashed border-accent/30 rounded-3xl p-8 mb-12 group hover:bg-white/10 transition-all">
-              <p class="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4">Codi Localitzador</p>
-              <p class="text-6xl font-mono font-black text-white tracking-widest">{{ purchaseLocator }}</p>
+            <div class="bg-slate-50 border-2 border-dashed border-yellow-500/30 rounded-3xl p-8 mb-12 group hover:bg-white transition-all">
+              <p class="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-600 mb-4">Codi Localitzador</p>
+              <p class="text-6xl font-mono font-black text-slate-900 tracking-widest">{{ purchaseLocator }}</p>
               <div class="mt-6 flex items-center justify-center gap-2">
-                <span class="text-accent animate-pulse">●</span>
-                <p class="text-accent font-bold text-xs uppercase tracking-widest">Guarda aquest codi per consultar les teves entrades</p>
+                <span class="text-yellow-600 animate-pulse">●</span>
+                <p class="text-yellow-600 font-bold text-xs uppercase tracking-widest">Guarda aquest codi per consultar les teves entrades</p>
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <NuxtLink to="/meves-entrades" class="py-5 bg-white/5 text-white font-black rounded-2xl border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-3">
+              <NuxtLink to="/meves-entrades" class="py-5 bg-white text-slate-900 font-black rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-3">
                 CONSULTAR ENTRADES
               </NuxtLink>
-              <NuxtLink to="/" class="py-5 bg-accent text-black font-black rounded-2xl hover:bg-white transition-all shadow-xl flex items-center justify-center gap-3">
+              <NuxtLink to="/" class="py-5 bg-accent text-black font-black rounded-2xl hover:bg-slate-900 hover:text-white transition-all shadow-xl flex items-center justify-center gap-3">
                 TORNAR A L'INICI
               </NuxtLink>
             </div>
@@ -458,13 +458,13 @@ const updateCount = (typeId: number, delta: number) => {
       </template>
 
       <!-- Confirmation Bar (Step 2 Only) -->
-      <div v-if="currentStep === 2" class="confirmation-bar fixed bottom-0 left-0 right-0 h-28 bg-black/90 backdrop-blur-2xl border-t border-white/10 z-50">
+      <div v-if="currentStep === 2" class="confirmation-bar fixed bottom-0 left-0 right-0 h-28 bg-white/95 border-t border-slate-100 z-50">
         <div class="container mx-auto h-full flex justify-between items-center px-8">
           <div class="hidden md:flex flex-col">
-            <span class="text-accent text-[10px] uppercase font-black tracking-[0.3em] mb-1">Selecció actual</span>
+            <span class="text-yellow-600 text-[10px] uppercase font-black tracking-[0.3em] mb-1">Selecció actual</span>
             <div class="flex items-center gap-3">
-              <span class="text-4xl font-black text-white">{{ seatsStore.selectedCount }}</span>
-              <div class="flex flex-col text-white/40 leading-none">
+              <span class="text-4xl font-black text-slate-900">{{ seatsStore.selectedCount }}</span>
+              <div class="flex flex-col text-slate-400 leading-none">
                 <span class="text-[10px] font-bold uppercase tracking-widest">de {{ totalTickets }}</span>
                 <span class="text-[10px] font-bold uppercase tracking-widest">butaques</span>
               </div>
@@ -473,19 +473,19 @@ const updateCount = (typeId: number, delta: number) => {
 
           <div class="flex-1 mx-12">
             <div v-if="selectedSeats.length > 0" class="flex flex-wrap gap-2 animate-fade-in">
-              <span v-for="seat in selectedSeats" :key="seat.id" class="px-4 py-2 bg-accent/20 rounded-xl text-accent font-black text-xs border border-accent/20 shadow-xl">
+              <span v-for="seat in selectedSeats" :key="seat.id" class="px-4 py-2 bg-accent/20 rounded-xl text-yellow-600 font-black text-xs border border-accent/20 shadow-sm">
                 F {{ seat.fila }} - B.{{ seat.numero }}
               </span>
             </div>
-            <div v-else class="flex items-center gap-3 text-white/20">
-              <div class="w-8 h-8 rounded-full border border-dashed border-white/20 flex items-center justify-center text-sm">!</div>
+            <div v-else class="flex items-center gap-3 text-slate-300">
+              <div class="w-8 h-8 rounded-full border border-dashed border-slate-200 flex items-center justify-center text-sm">!</div>
               <span class="italic text-sm font-medium">Tria les teves butaques al mapa superior per continuar...</span>
             </div>
           </div>
           
           <button 
             @click="goToPayment"
-            class="group relative px-12 py-5 bg-accent text-black font-black rounded-2xl hover:bg-white transition-all active:scale-95 disabled:opacity-10 disabled:grayscale disabled:cursor-not-allowed shadow-[0_15px_30px_-5px_rgba(255,222,0,0.4)]"
+            class="group relative px-12 py-5 bg-accent text-black font-black rounded-2xl hover:bg-slate-900 hover:text-white transition-all active:scale-95 disabled:opacity-10 disabled:grayscale disabled:cursor-not-allowed shadow-[0_15px_30px_-5px_rgba(255,222,0,0.4)]"
             :disabled="seatsStore.selectedCount !== totalTickets"
           >
             <span class="relative z-10 flex items-center gap-3 text-lg">

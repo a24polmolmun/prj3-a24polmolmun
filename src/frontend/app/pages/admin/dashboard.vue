@@ -103,20 +103,6 @@ const totalRevenue = computed(() => {
         </div>
       </header>
 
-      <!-- System Status Bar -->
-      <div class="flex items-center gap-4 mb-8 bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-lg w-fit">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-          <span class="text-[10px] font-black uppercase tracking-widest text-white/60">Sistema:</span>
-          <span class="text-[10px] font-black uppercase tracking-widest">Operatiu</span>
-        </div>
-        <div class="w-px h-4 bg-white/10"></div>
-        <div class="flex items-center gap-2">
-          <span class="text-[10px] font-black uppercase tracking-widest text-white/60">API:</span>
-          <span class="text-[10px] font-black uppercase tracking-widest text-green-400">Connectada</span>
-        </div>
-      </div>
-
       <!-- KPI Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
         <!-- Live Users -->

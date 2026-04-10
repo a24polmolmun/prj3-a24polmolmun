@@ -29,7 +29,7 @@ const isSocketConnected = useState('isSocketConnected', () => true)
     </transition>
 
     <!-- Header públic -->
-    <header :class="{ 'hidden': $route.path.includes('/admin') }" class="bg-gray-900 relative z-[100] border-b border-white/5 py-4 transition-all duration-300">
+    <header :class="{ 'hidden': $route.path.includes('/admin') }" class="bg-slate-900 relative z-[100] border-b border-white/5 py-4 transition-all duration-300">
       <div class="container mx-auto px-6 flex items-center justify-between">
         <NuxtLink to="/" class="text-xl font-black text-white uppercase italic tracking-tighter">Cinema <span class="text-accent">Pol</span></NuxtLink>
         <nav>
@@ -42,12 +42,12 @@ const isSocketConnected = useState('isSocketConnected', () => true)
       </div>
     </header>
 
-    <main :class="{ 'bg-slate-950': !$route.path.includes('/admin'), 'bg-white': $route.path.includes('/admin') }" class="flex-1 flex flex-col min-h-0">
+    <main class="flex-1 flex flex-col min-h-0 p-0">
       <NuxtPage />
     </main>
 
     <!-- Footer públic -->
-    <footer :class="{ 'hidden': $route.path.includes('/admin') }" class="bg-gray-900 py-12 border-t border-white/5">
+    <footer :class="{ 'hidden': $route.path.includes('/admin') }" class="bg-slate-900 py-12 border-t border-white/5">
       <div class="container mx-auto px-6 text-center">
         <p class="text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">&copy; 2026 Cinema Cat - Tots els drets reservats</p>
       </div>
@@ -59,8 +59,8 @@ const isSocketConnected = useState('isSocketConnected', () => true)
 body {
   margin: 0;
   padding: 0;
-  background-color: #020617; /* Slate 950 base */
-  @apply bg-slate-950;
+  background-color: #ffffff;
+  @apply bg-white;
 }
 .text-accent { color: #ffde00; }
 .bg-accent { background-color: #ffde00; }
