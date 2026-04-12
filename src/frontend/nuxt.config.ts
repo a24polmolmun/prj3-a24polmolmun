@@ -14,8 +14,8 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://prj-entrades-polmolmun.daw.inspedralbes.cat:8000/api',
-      socketUrl: process.env.NUXT_PUBLIC_SOCKET_URL || 'https://prj-entrades-polmolmun.daw.inspedralbes.cat:4000',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://prj-entrades-polmolmun.daw.inspedralbes.cat:8000/api',
+      socketUrl: process.env.NUXT_PUBLIC_SOCKET_URL || 'http://prj-entrades-polmolmun.daw.inspedralbes.cat:4000',
     }
   },
   vite: {
