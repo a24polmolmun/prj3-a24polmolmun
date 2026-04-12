@@ -1,3 +1,4 @@
+<script setup lang="ts">
 // Recuperar llista de pel·lícules de l'API (només al client)
 const config = useRuntimeConfig()
 const { data, refresh } = await useFetch(`${config.public.apiBase}/admin/esdeveniments`, { server: false })
