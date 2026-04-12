@@ -1,6 +1,7 @@
 <script setup lang="ts">
+const config = useRuntimeConfig()
 // Fetch real movies from Laravel API with robust error handling
-const { data, pending, error, refresh } = useFetch('http://localhost:8000/api/esdeveniments', {
+const { data, pending, error, refresh } = useFetch(`${config.public.apiBase}/esdeveniments`, {
   lazy: true,
   // Retry 3 times with exponential backoff behavior (default Nuxt behavior if true/number)
   retry: 3,

@@ -14,11 +14,12 @@ const seatsStore = useSeatsStore()
 const { releaseAllSeats } = useSocket()
 const reviewStore = useReviewStore()
 
+const config = useRuntimeConfig()
 const movieId = Number(route.params.id)
 const hora = route.query.hora as string
 
 // Fetch real movie details and seats from Laravel API
-const { data, pending, error } = useFetch(`http://localhost:8000/api/esdeveniments/${movieId}?hora=${hora}`)
+const { data, pending, error } = useFetch(`${config.public.apiBase}/esdeveniments/${movieId}?hora=${hora}`)
 
 const movie = computed(() => (data.value as any)?.data)
 
@@ -139,7 +140,7 @@ const confirmPurchase = async () => {
 
   isSubmitting.value = true
   try {
-    const response = await $fetch('http://localhost:8000/api/compra', {
+    const response = await $fetch(`${config.public.apiBase}/compra`, {
       method: 'POST',
       body: {
         esdeveniment_id: movieId,
@@ -227,7 +228,7 @@ const updateCount = (typeId: number, delta: number) => {
                <!-- Poster Image -->
                <img 
                  v-if="movie.imatge"
-                 :src="movie.imatge.startsWith('/storage') ? 'http://localhost:8000' + movie.imatge : movie.imatge"
+                 :src="movie.imatge.startsWith('/storage') ? config.public.apiBase.replace('/api', '') + movie.imatge : movie.imatge"
                  class="w-full h-full object-cover"
                />
                <!-- Gradient Poster fallback -->

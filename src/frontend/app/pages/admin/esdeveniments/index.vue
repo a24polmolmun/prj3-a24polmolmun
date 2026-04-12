@@ -1,12 +1,12 @@
-<script setup lang="ts">
 // Recuperar llista de pel·lícules de l'API (només al client)
-const { data, refresh } = await useFetch('http://localhost:8000/api/admin/esdeveniments', { server: false })
+const config = useRuntimeConfig()
+const { data, refresh } = await useFetch(`${config.public.apiBase}/admin/esdeveniments`, { server: false })
 const movies = computed(() => (data.value as any)?.data || [])
 
 const deleteMovie = async (id: number) => {
   if (confirm('Estàs segur que vols eliminar aquesta pel·lícula? Totes les sessions i reserves associades s\'eliminaran.')) {
     try {
-      await $fetch(`http://localhost:8000/api/admin/esdeveniments/${id}`, { method: 'DELETE' })
+      await $fetch(`${config.public.apiBase}/admin/esdeveniments/${id}`, { method: 'DELETE' })
       refresh()
     } catch (e) {
       alert('Error en eliminar la pel·lícula')
@@ -42,7 +42,7 @@ const deleteMovie = async (id: number) => {
         >
           <div class="flex items-center gap-8 flex-1 w-full lg:w-auto">
              <div class="w-16 h-20 bg-slate-50 rounded-xl overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center relative">
-                <img v-if="movie.imatge" :src="movie.imatge.startsWith('/storage') ? 'http://localhost:8000' + movie.imatge : movie.imatge" class="w-full h-full object-cover">
+                <img v-if="movie.imatge" :src="movie.imatge.startsWith('/storage') ? config.public.apiBase.replace('/api', '') + movie.imatge : movie.imatge" class="w-full h-full object-cover">
                 <span v-else class="text-[8px] text-slate-300 font-bold uppercase">Sense Imatge</span>
              </div>
              <div class="flex-1 min-w-0">

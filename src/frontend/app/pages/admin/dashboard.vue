@@ -20,7 +20,8 @@ const selectedSessionId = ref<number | null>(null)
 const isLoadingSeats = ref(false)
 
 // Recuperar estadístiques inicials i llista d'esdeveniments (sense SSR per evitar problemes en recarregar en Docker)
-const { data: statsData } = await useFetch('http://localhost:8000/api/admin/stats', { server: false })
+const config = useRuntimeConfig()
+const { data: statsData } = await useFetch(`${config.public.apiBase}/admin/stats`, { server: false })
 watch(statsData, (newVal) => {
     if (newVal) {
         const d = (newVal as any).data
@@ -32,7 +33,7 @@ watch(statsData, (newVal) => {
     }
 }, { immediate: true })
 
-const { data: eventsData } = await useFetch('http://localhost:8000/api/admin/esdeveniments', { server: false })
+const { data: eventsData } = await useFetch(`${config.public.apiBase}/admin/esdeveniments`, { server: false })
 watch(eventsData, (newVal) => {
     if (newVal) {
         esdeveniments.value = (newVal as any).data || []
@@ -60,7 +61,7 @@ watch(selectedSessionId, async (newId) => {
         isLoadingSeats.value = true
         try {
             // Utilitzem $fetch per a peticions imperatives dins de watchers
-            const response = await $fetch(`http://localhost:8000/api/esdeveniments/${selectedEventId.value}?hora=${session.hora}`) as any
+            const response = await $fetch(`${config.public.apiBase}/esdeveniments/${selectedEventId.value}?hora=${session.hora}`) as any
             
             if (response.success && response.data) {
                 seatsStore.setSeats(response.data.seients || [])

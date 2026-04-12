@@ -26,8 +26,9 @@ export const useSeatsStore = defineStore('seats', {
             this.seats = seats
         },
         async fetchSeats(eventId: number, hora: string) {
+            const config = useRuntimeConfig()
             try {
-                const response = await $fetch(`http://localhost:8000/api/esdeveniments/${eventId}?hora=${hora}`) as any
+                const response = await $fetch(`${config.public.apiBase}/esdeveniments/${eventId}?hora=${hora}`) as any
                 if (response?.data?.seients) {
                     this.setSeats(response.data.seients)
                 }

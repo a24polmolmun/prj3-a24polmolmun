@@ -11,10 +11,11 @@ export const useReviewStore = defineStore('reviews', {
 
     actions: {
         async fetchReviews(eventId: number | string) {
+            const config = useRuntimeConfig()
             this.isLoading = true
             this.error = null
             try {
-                const response: any = await $fetch(`http://localhost:8000/api/esdeveniments/${eventId}/reviews`)
+                const response: any = await $fetch(`${config.public.apiBase}/esdeveniments/${eventId}/reviews`)
                 if (response.success) {
                     this.reviews = response.data
                     this.averageRating = response.average_rating
@@ -29,12 +30,13 @@ export const useReviewStore = defineStore('reviews', {
         },
 
         async submitReview(reviewData: { esdeveniment_id: number | string, nom_usuari: string, rating: number, comment: string }) {
+            const config = useRuntimeConfig()
             this.isLoading = true
             this.error = null
             try {
                 // En un entorn real, s'hauria de passar el token de Sanctum
                 // Suposem que el middleware de Nuxt o el plugin de fetch ja el gestiona si s'ha fet login
-                const response: any = await $fetch('http://localhost:8000/api/reviews', {
+                const response: any = await $fetch(`${config.public.apiBase}/reviews`, {
                     method: 'POST',
                     body: reviewData
                 })

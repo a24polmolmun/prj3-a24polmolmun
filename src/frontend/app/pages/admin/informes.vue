@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const { data } = await useFetch('http://localhost:8000/api/admin/stats')
+const config = useRuntimeConfig()
+const { data } = await useFetch(`${config.public.apiBase}/admin/stats`, { server: false })
 const stats = computed(() => (data.value as any)?.data || {})
 
 const totalRevenue = computed(() => {

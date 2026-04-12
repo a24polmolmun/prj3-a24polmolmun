@@ -1,6 +1,7 @@
 import { io, type Socket } from 'socket.io-client'
 
 export default defineNuxtPlugin(() => {
+    const config = useRuntimeConfig()
     // Inicialitzem l'estat global de la connexió (compartit entre SSR i Client)
     // Per defecte posem true per evitar el banner durant el renderitzat del servidor (SSR)
     const isSocketConnected = useState('isSocketConnected', () => true)
@@ -8,9 +9,9 @@ export default defineNuxtPlugin(() => {
     let socket: Socket | null = null
 
     if (process.client || import.meta.client) {
-        console.log('Plugin Socket.IO: Intentant connectar a http://localhost:4000...');
+        console.log(`Plugin Socket.IO: Intentant connectar a ${config.public.socketUrl}...`);
 
-        socket = io('http://localhost:4000', {
+        socket = io(`${config.public.socketUrl}`, {
             reconnection: true,
             reconnectionAttempts: 5, // Limitem per debug
             reconnectionDelay: 1000,

@@ -21,6 +21,8 @@ const props = defineProps<{
   movie: Movie
 }>()
 
+const config = useRuntimeConfig()
+
 // Hores des de l'API amb fallback per si no n'hi ha cap
 const sessions = computed(() => {
   if (props.movie.sessions && props.movie.sessions.length > 0) {
@@ -41,7 +43,7 @@ const formattedHora = computed(() => {
     <!-- Image Section -->
     <div class="relative h-64 overflow-hidden">
       <img 
-        :src="movie.imatge?.startsWith('/storage') ? 'http://localhost:8000' + movie.imatge : (movie.imatge || 'https://images.unsplash.com/photo-1485846234645-a62644ffb1e7?q=80&w=1000&auto=format&fit=crop')" 
+        :src="movie.imatge?.startsWith('/storage') ? config.public.apiBase.replace('/api', '') + movie.imatge : (movie.imatge || 'https://images.unsplash.com/photo-1485846234645-a62644ffb1e7?q=80&w=1000&auto=format&fit=crop')" 
         :alt="movie.nom" 
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />

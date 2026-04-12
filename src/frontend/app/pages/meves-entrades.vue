@@ -7,6 +7,7 @@ const searched = ref(false)
 const errorMsg = ref('')
 
 const buscarEntrades = async () => {
+  const config = useRuntimeConfig()
   if (!email.value || !localitzador.value) return
   
   loading.value = true
@@ -15,7 +16,7 @@ const buscarEntrades = async () => {
   reserves.value = []
   
   try {
-    const data = await $fetch(`http://localhost:8000/api/entrades?email=${email.value}&localitzador=${localitzador.value}`)
+    const data = await $fetch(`${config.public.apiBase}/entrades?email=${email.value}&localitzador=${localitzador.value}`)
     reserves.value = data as any[]
     if (reserves.value.length === 0) {
       errorMsg.value = 'No hem trobat cap reserva amb aquestes dades.'

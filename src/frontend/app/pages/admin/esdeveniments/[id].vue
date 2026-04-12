@@ -20,7 +20,8 @@ const form = ref({
 const selectedFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
 
-const { data: movieResponse } = useFetch(() => isEdit ? `http://localhost:8000/api/admin/esdeveniments/${route.params.id}` : null, { 
+const config = useRuntimeConfig()
+const { data: movieResponse } = useFetch(() => isEdit ? `${config.public.apiBase}/admin/esdeveniments/${route.params.id}` : null, { 
     server: false,
     immediate: isEdit 
 })
@@ -99,8 +100,8 @@ const save = async () => {
     }
 
     const url = isEdit 
-      ? `http://localhost:8000/api/admin/esdeveniments/${route.params.id}`
-      : 'http://localhost:8000/api/admin/esdeveniments'
+      ? `${config.public.apiBase}/admin/esdeveniments/${route.params.id}`
+      : `${config.public.apiBase}/admin/esdeveniments`
     
     await $fetch(url, {
       method: 'POST',
@@ -199,7 +200,7 @@ const save = async () => {
             <div v-if="imagePreview" class="pt-2">
                 <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">Vista prèvia del pòster</p>
                 <div class="relative w-40 aspect-[2/3] rounded-xl overflow-hidden border border-slate-200 shadow-sm transition-transform hover:scale-105">
-                    <img :src="imagePreview.startsWith('blob:') ? imagePreview : (imagePreview.startsWith('/storage') ? 'http://localhost:8000' + imagePreview : imagePreview)" class="w-full h-full object-cover" />
+                    <img :src="imagePreview.startsWith('blob:') ? imagePreview : (imagePreview.startsWith('/storage') ? config.public.apiBase.replace('/api', '') + imagePreview : imagePreview)" class="w-full h-full object-cover" />
                 </div>
             </div>
           </div>
