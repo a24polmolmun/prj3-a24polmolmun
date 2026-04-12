@@ -54,7 +54,7 @@ const deleteMovie = async (id: number) => {
                 <div class="flex flex-wrap gap-4">
                    <div class="flex items-center gap-1">
                       <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Sessions:</span>
-                      <span class="text-[10px] font-black text-slate-700">{{ movie.sessions_count }}</span>
+                       <span class="text-[10px] font-black text-slate-700">{{ movie.sessions_count }}</span>
                    </div>
                    <div class="flex items-center gap-1">
                       <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Butaques:</span>
