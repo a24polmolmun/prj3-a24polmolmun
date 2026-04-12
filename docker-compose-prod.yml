@@ -22,7 +22,7 @@ services:
       - mysql
     ports:
       - "8000:8000"
-    command: sh -c "composer install --no-dev && php artisan key:generate --force --no-interaction && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+    command: sh -c "composer install --no-dev && ( [ ! -f .env ] && cp .env.production .env || true ) && php artisan key:generate --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
     networks:
       - prj-network
 
