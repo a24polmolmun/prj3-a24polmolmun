@@ -59,8 +59,8 @@ A continuació s'explica com arrencar tot el sistema localment des de zero.
 
 ### Pas 1: Clonar el repositori
 ```bash
-git clone [URL_DEL_TEU_REPOSITORI_GIT]
-cd [nom-de-la-carpeta-del-repo]
+git clone https://github.com/a24polmolmun/prj3-a24polmolmun.git
+cd prj3-a24polmolmun
 ```
 
 ### Pas 2: Configuració del Backend (Laravel API)
