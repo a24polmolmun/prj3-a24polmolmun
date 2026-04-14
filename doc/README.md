@@ -25,7 +25,7 @@ Diagrama de Seqüència (Procés de Compra + Socket.IO)
 <img width="1132" height="676" alt="image" src="https://github.com/user-attachments/assets/0f959141-d8fb-4c58-ac59-c0e60d9ffd18" />
 
 * **Diagrama de Pantalles:** https://stitch.withgoogle.com/projects/6361264361055921812
-* **URL de producció:** ["Pendent de desplegament"]
+* **URL de producció:** https://prj-entrades-polmolmun.daw.inspedralbes.cat/
 
 ---
 
