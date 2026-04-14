@@ -10,6 +10,12 @@ services:
       - "3306:3306"
     networks:
       - prj-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   backend-api:
     build:
@@ -19,10 +25,11 @@ services:
     volumes:
       - ./src/backend-api:/var/www/html
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     ports:
       - "8000:8000"
-    command: sh -c "composer install --no-dev && ( [ ! -f .env ] && cp .env.production .env || true ) && php artisan key:generate --force && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+    command: sh -c "composer install --no-dev && ( [ ! -f .env ] && cp .env.example .env || true ) && (grep -q 'APP_KEY=base64' .env || php artisan key:generate --force) && until php artisan migrate --force; do echo 'Waiting for database...'; sleep 2; done && php artisan serve --host=0.0.0.0 --port=8000"
     networks:
       - prj-network
 

@@ -50,7 +50,12 @@ class Esdeveniment extends Model
      */
     public function getAverageRatingAttribute()
     {
-        return round($this->reviews()->avg('rating'), 1) ?: 0;
+        try {
+            return round($this->reviews()->avg('rating'), 1) ?: 0;
+        }
+        catch (\Exception $e) {
+            return 0;
+        }
     }
 
     protected $appends = ['average_rating'];

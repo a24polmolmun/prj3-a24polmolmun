@@ -10,17 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('esdeveniment_id')->constrained()->onDelete('cascade');
-            $table->tinyInteger('rating')->unsigned(); // 1-5
-            $table->text('comment')->nullable();
-            $table->timestamps();
+        if (!Schema::hasTable('reviews')) {
+            Schema::create('reviews', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->foreignId('esdeveniment_id')->constrained()->onDelete('cascade');
+                $table->tinyInteger('rating')->unsigned(); // 1-5
+                $table->text('comment')->nullable();
+                $table->timestamps();
 
-            // Garantir que un usuari només pot deixar una ressenya per esdeveniment
-            $table->unique(['user_id', 'esdeveniment_id']);
-        });
+                // Garantir que un usuari només pot deixar una ressenya per esdeveniment
+                $table->unique(['user_id', 'esdeveniment_id']);
+            });
+        }
     }
 
     /**
